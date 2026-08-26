@@ -1,0 +1,60 @@
+# --- Python / Django ---
+__pycache__/
+*.py[cod]
+*.pyd
+*.pyo
+*.pdb
+*.egg-info/
+dist/
+build/
+.Python
+pip-wheel-metadata/
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.coverage
+coverage.xml
+htmlcov/
+
+# Django
+*.log
+local_settings.py
+db.sqlite3
+db.sqlite3-journal
+media/
+staticfiles/
+
+# Virtualenvs
+.venv/
+venv/
+env/
+ENV/
+
+# --- Node / JavaScript ---
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+.npm/
+.yarn/
+.pnpm-store/
+
+# Build outputs (adjust if you use these)
+out/
+dist/
+build/
+.next/
+.nuxt/
+.svelte-kit/
+
+# --- Project-specific generated/output ---
+saida/
+
+# --- OS / IDE ---
+.DS_Store
+Thumbs.db
+Desktop.ini
+$RECYCLE.BIN/
+
+.vscode/
