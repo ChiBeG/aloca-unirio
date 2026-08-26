@@ -1,0 +1,407 @@
+CodigoEscola;CodigoPredioOrigem;Curso;Disciplina;Vagas;Periodo;Professor;SIAPE;DiaSemana;HoraInicio;HoraFim;CodigoSalaFixa
+1;1;Bacharelado em Arquivologia;Const do Pensamento Arquivístico;40;1;Joao Marcus Figueiredo Assis;0;3;18;22;91313
+1;1;Bacharelado em Arquivologia;Introdução a Arquivologia;40;1;Eliezer Pires da Silva;0;2;18;22;91313
+1;1;Bacharelado em Arquivologia;Ética Profissional Arquivística;40;1;Flavio Leal da Silva;0;4;18;20;91313
+1;1;Bacharelado em Arquivologia;Método da Pesquisa Arquivística;40;1;Priscila Ribeiro Gomes;0;6;18;22;91313
+1;1;Bacharelado em Arquivologia;Memória Cultura e Sociedade;40;1;Igor Silva Gak;0;5;18;22;91313
+1;1;Bacharelado em Arquivologia;Arquivologia e Ciência da Informação;40;2;Rosale de Mattos Souza;0;3;18;22;0
+1;1;Bacharelado em Arquivologia;Metodologia Científica;40;2;Carmen Irene;0;5;18;22;0
+1;1;Bacharelado em Arquivologia;Gestão da Informação Arquivística;40;2;Alexandre Faben;0;6;18;22;0
+1;1;Bacharelado em Arquivologia;Administração I;30;2;Ricardo Bezerra;0;3;18;22;0
+1;1;Bacharelado em Arquivologia;Classificação de Docs Arquivísticos;40;3;Fernanda Monteiro;0;3;18;22;0
+1;1;Bacharelado em Arquivologia;Tópicos Especiais em Arq Comunitarios;30;3;Marcelo Siqueira;0;3;18;20;0
+1;1;Bacharelado em Arquivologia;Sem de Arquivística I A Int Arqs e Educ;15;3;Priscila Ribeiro Gomes;1670065;5;18;20;0
+1;1;Bacharelado em Arquivologia;Sem de Arquivística II A Int Arqs e Educ;15;3;Priscila Ribeiro Gomes;1670065;5;20;22;0
+1;1;Bacharelado em Arquivologia;Avaliacao de Docs  Arquivísticos;40;3;Mariana Lousada;0;2;18;22;0
+1;1;Bacharelado em Arquivologia;Arranjo e Descricao de Docs;40;4;Jair Martins de Miranda;0;2;18;22;0
+1;1;Bacharelado em Arquivologia;Diplomatica;40;4;Danilo Andre Bueno;0;3;18;22;0
+1;1;Bacharelado em Arquivologia;Administração II;30;4;Ricardo Bezerra;0;5;18;22;0
+1;1;Bacharelado em Arquivologia;Pesquisa em Arquivística;40;5;Bruno Ferreira Leite;0;3;18;22;0
+1;1;Bacharelado em Arquivologia;Paleografia;40;5;Marcelo Siqueira;0;5;18;22;0
+1;1;Bacharelado em Arquivologia;Informática Aplicada aos Arqs;40;5;Brenda Rocco;0;2;18;22;0
+1;1;Bacharelado em Arquivologia;Gestão de Docs Arquivísticos;40;6;Alexandre Faben;0;5;18;22;0
+1;1;Bacharelado em Arquivologia;Trabalho de Conclusão de Curso I;40;6;Joao Marcus Figueiredo Assis;0;4;18;22;0
+1;1;Bacharelado em Arquivologia;Organização Prática de Arquivos A;30;7;Jair Martins de Miranda;0;3;18;22;0
+1;1;Bacharelado em Arquivologia;Gestão de Serviços Arquivísticos;40;7;Fernanda Monteiro;0;5;18;22;0
+1;1;Bacharelado em Arquivologia;Politicas de Acesso a Inf Arquivística;40;8;Rosale de Mattos Souza;0;6;18;22;0
+1;1;Bacharelado em Arquivologia;Gestão Eletrônica de Docs Arquivísticos;40;8;Brenda Rocco;0;3;18;22;0
+1;1;Bacharelado em Arquivologia;Gestão de Instituições Arquivísticas;20;8;Renato Crivelli;0;5;18;22;0
+2;1;Bacharelado em Biblioteconomia;História do Brasil III;60;1;Caroline A Guebert;0;3;18;22;91205
+2;1;Bacharelado em Biblioteconomia;Teorias e Práticas Discursivas;50;1;Thalita Cruz;0;2;8;12;91205
+2;1;Bacharelado em Biblioteconomia;Fundamentos em Inglês Instr;50;1;Marcello de O Pinto;0;6;18;22;91205
+2;1;Bacharelado em Biblioteconomia;Fundamentos da Biblioteconomia;50;1;Camila Silva;0;4;18;22;91205
+2;1;Bacharelado em Biblioteconomia;Fundamentos da Biblioteconomia;50;1;Camila Silva;0;4;7;10;91205
+2;1;Bacharelado em Biblioteconomia;Lógica;50;1;Vania Azeredo;0;5;18;22;91205
+2;1;Bacharelado em Biblioteconomia;Teorias e Práticas Discursivas;90;1;Jose Sena;0;2;18;22;91205
+2;1;Bacharelado em Biblioteconomia;Fundamentos de Inglês Instrumental;50;1;Diana Pinto;0;3;8;12;91205
+2;1;Bacharelado em Biblioteconomia;Lógica;50;1;Rosana Soarez;0;6;8;12;91205
+2;1;Bacharelado em Biblioteconomia;História do Brasil III;60;1;Caroline A Guebert;0;5;8;12;91205
+2;1;Bacharelado em Biblioteconomia;História do Livro e das Biblio I;50;2;Kelly Melo;0;4;8;12;0
+2;1;Bacharelado em Biblioteconomia;Introdução a Ciência da Informação;50;2;Ana Amelia Martins;0;6;8;12;0
+2;1;Bacharelado em Biblioteconomia;Leitura e Interp em Língua Inglesa;30;2;Marcello de O Pinto;0;5;18;22;0
+2;1;Bacharelado em Biblioteconomia;Leitura e Interp em Língua Inglesa;30;2;Thais Borges;0;2;8;12;0
+2;1;Bacharelado em Biblioteconomia;Fundamentos da Bibliografia e da Doc;70;2;Amanda Salomao;0;4;18;22;0
+2;1;Bacharelado em Biblioteconomia;Teoria do conhecimento ;50;2;Nathan Teixeira;0;3;18;22;0
+2;1;Bacharelado em Biblioteconomia;Teoria do conhecimento ;50;2;Nathan Teixeira;0;5;8;12;0
+2;1;Bacharelado em Biblioteconomia;Normalizacao Documentaria;50;2;Camila Silva;1234567;3;7;10;0
+2;1;Bacharelado em Biblioteconomia;Introdução as Ciências Sociais;50;2;Gabriel Bastos;1234567;3;10;13;0
+2;1;Bacharelado em Biblioteconomia;Estudos de Usuarios e Comunidades;35;3;Claudia Souza;8910111;2;10;13;0
+2;1;Bacharelado em Biblioteconomia;História do Livro e das Biblio II;40;3;Stefanie Freire;0;6;8;12;0
+2;1;Bacharelado em Biblioteconomia;Organização do Conhecimento I;45;3;Ludmila Guimaraes;0;3;8;12;0
+2;1;Bacharelado em Biblioteconomia;Organização do Conhecimento I;60;3;Thais Lamas;0;6;18;22;0
+2;1;Bacharelado em Biblioteconomia;Teoria e Prática do Serv de Ref;35;3;Simone Okuzono;8910111;2;7;10;0
+2;1;Bacharelado em Biblioteconomia;Teoria e Prática Disc na Esfera Acadêmica;40;3;Thalita Cruz;0;5;8;12;0
+2;1;Bacharelado em Biblioteconomia;História do Livro e das Biblio I;40;3;Stefanie Freire;0;5;18;22;0
+2;1;Bacharelado em Biblioteconomia;Introdução a Ciência da Informação;30;3;Geni Chaves;0;2;18;22;0
+2;1;Bacharelado em Biblioteconomia;Normalizacao Documentaria;50;3;Thais Lamas;0;3;18;22;0
+2;1;Bacharelado em Biblioteconomia;Estudos de Usuarios e Comunidades;35;4;Alex Guizalberth;0;5;18;22;0
+2;1;Bacharelado em Biblioteconomia;História do Livro e das Bibliotecas II;30;4;Amanda Salomao;0;2;18;22;0
+2;1;Bacharelado em Biblioteconomia;Teoria e Prática do Serv de Ref;35;4;Alex Guizalberth;0;3;18;22;0
+2;1;Bacharelado em Biblioteconomia;Organização do Conhecimento II;40;4;Thais Lamas;0;4;18;22;0
+2;1;Bacharelado em Biblioteconomia;Organização do Conhecimento II;30;4;Ludmila Guimaraes;0;4;8;12;0
+2;1;Bacharelado em Biblioteconomia;Administração I;25;4;Filipe Quelhas;0;6;8;12;0
+2;1;Bacharelado em Biblioteconomia;Sentido e Forma da Prod Art;20;5;Renato Rodrigues;0;5;18;22;0
+2;1;Bacharelado em Biblioteconomia;Sentido e Forma da Prod Art;10;5;Renato Rodrigues;0;3;8;12;0
+2;1;Bacharelado em Biblioteconomia;Teoria e Prática Disc na Esfera Acadêmica;50;5;Thais Borges;0;4;18;22;0
+2;1;Bacharelado em Biblioteconomia;Tópicos Especiais em Ciência da Inf I;10;5;Claudia Guerra;0;3;8;12;0
+2;1;Bacharelado em Biblioteconomia;Tópicos Especiais em Biblioteconomia;35;5;Alberto Calil;0;2;18;22;0
+2;1;Bacharelado em Biblioteconomia;Inf Memória e Doc;40;5;Bianca Rihan;0;2;18;22;0
+2;1;Bacharelado em Biblioteconomia;Inf Memória e Doc;25;5;Bianca Rihan;0;5;8;12;0
+2;1;Bacharelado em Biblioteconomia;Analise da Informação;20;5;Geni Chaves;0;4;18;22;0
+2;1;Bacharelado em Biblioteconomia;Estatística Aplicada as Ciências Sociais;30;5;Davi Alves;0;6;18;22;0
+2;1;Bacharelado em Biblioteconomia;Fontes de Informações Gerais;20;5;Claudia Souza;0;5;8;12;0
+2;1;Bacharelado em Biblioteconomia;Organização e Adm de Bibliotecas I;30;5;Jaqueline Barradas;0;4;8;12;0
+2;1;Bacharelado em Biblioteconomia;Org de Conc em Ling Documentaria;40;6;Nathalia Romeiro;0;5;18;22;0
+2;1;Bacharelado em Biblioteconomia;Filosofia da Ciência e da Tec;10;6;Dario Alves;0;6;8;12;0
+2;1;Bacharelado em Biblioteconomia;Tecnologia de Rep e Arm de Docs;30;6;Claudia Guerra;0;4;18;22;0
+2;1;Bacharelado em Biblioteconomia;Estat Aplic as Ciências Sociais;30;6;Maria Beatriz Cunha;0;3;8;12;0
+2;1;Bacharelado em Biblioteconomia;Fontes de Informacoes Gerais;20;6;Alberto Calil;0;6;18;22;0
+2;1;Bacharelado em Biblioteconomia;Fontes de Informação Esp;30;6;Fabiana Pinto;0;6;8;12;0
+2;1;Bacharelado em Biblioteconomia;Formacao e Desenv de Colecoes;20;6;Daniele Achilles;0;4;8;12;0
+2;1;Bacharelado em Biblioteconomia;Organização e Adm de Bibliotecas II;25;6;Jaqueline Barradas;0;5;8;12;0
+2;1;Bacharelado em Biblioteconomia;Ética Profissional;40;6;Thais Lamas;0;2;18;20;0
+2;1;Bacharelado em Biblioteconomia;Metod da Pesq em Biblioteconomia;15;7;Nanci Oddone;0;3;8;12;0
+2;1;Bacharelado em Biblioteconomia;Ética Profissional;15;7;Claudia Souza;0;2;8;10;0
+2;1;Bacharelado em Biblioteconomia;Comunicação Científica;10;7;Fabiana Pinto;0;5;8;12;0
+2;1;Bacharelado em Biblioteconomia;Organização e Adm de Bibliotecas I;30;7;Ana Paula Santos;0;6;18;22;0
+2;1;Bacharelado em Biblioteconomia;Formacao e Desenv de Colecoes;35;7;Ana Paula Santos;0;2;18;22;0
+2;1;Bacharelado em Biblioteconomia;Gestão Estrat da Inf e do Conhec;20;7;Carlos A Ferreira;0;4;8;12;0
+2;1;Bacharelado em Biblioteconomia;Tópicos Especiais em Ciência da Inf I ;25;7;Claudia Guerra;0;5;18;22;0
+2;1;Bacharelado em Biblioteconomia;Organização e Adm de Bibliotecas II;20;8;Claudia Souza;0;4;18;22;0
+2;1;Bacharelado em Biblioteconomia;Biblioteconomia Escolar;30;5;Marcos Hubner;0;5;18;22;0
+2;1;Bacharelado em Biblioteconomia;Biblioteconomia Especial;30;5;Marcos Miranda;0;5;18;20;0
+2;1;Bacharelado em Biblioteconomia;Discurso e Representacao;30;5;Nathalia Romeiro;0;5;8;12;0
+2;1;Licenciatura em Biblioteconomia;Fundamentos da Biblioteconomia;40;1;Janaina Polonini;0;4;18;22;91211
+2;1;Licenciatura em Biblioteconomia;Comunicação;40;1;Luciana A de Souza;0;3;18;22;91211
+2;1;Licenciatura em Biblioteconomia;Introdução as Ciências Sociais;60;1;Leone Campos;0;6;18;22;91211
+2;1;Licenciatura em Biblioteconomia;Introdução a Ciência da Informação;30;2;Ana Amelia Martins;0;3;18;22;0
+2;1;Licenciatura em Biblioteconomia;História do Livro e das Biblio;30;2;Kelly Melo;0;6;18;22;0
+2;1;Licenciatura em Biblioteconomia;Filosofia da Ciência e da Tec;30;2;Orlando Gomes;0;5;18;22;0
+2;1;Licenciatura em Biblioteconomia;Administração I;40;3;Filipe Quelhas;0;2;18;22;0
+2;1;Licenciatura em Biblioteconomia;Fontes de Informação;15;4;Alex Guizalberth;0;2;18;22;0
+2;1;Licenciatura em Biblioteconomia;Método do Ensino de Biblioteconomia;15;5;Janaina Polonini;0;6;18;22;0
+2;1;Licenciatura em Biblioteconomia;Organização e Adm de Bibliotecas;15;5;Dayanne Prudencio;0;3;18;22;0
+2;1;Licenciatura em Biblioteconomia;Metodos e Tec de Pesq em Educ Bibliot;15;5;Fabiana Pinto;0;5;18;22;0
+2;1;Licenciatura em Biblioteconomia;Tecnologia de Rep e Arm de Docs;30;6;Durval Pereira;0;4;18;22;0
+2;1;Licenciatura em Biblioteconomia;Ensino de Org e Adm de Bibliotecas;10;6;Dayanne Prudencio;0;4;18;22;0
+2;1;Licenciatura em Biblioteconomia;Pol de Pres de Acervos e Bibliotecas;20;6;Vinicius Ribeiro;0;3;18;22;0
+2;1;Licenciatura em Biblioteconomia;Ensino de Org do Conhec e Rep de Docs ;10;7;Vinicius Ribeiro;0;6;18;22;0
+2;1;Licenciatura em Biblioteconomia;Ensino de Form e Desenv de Colecoes;10;8;Ana Paula Santos;0;4;18;22;0
+2;1;Licenciatura em Biblioteconomia;Ensino de Rec e Serv de Inf;10;8;Fabiana Pinto;0;3;18;22;0
+3;1;Licenciatura em Pedagogia;Didatica;50;3;Adriana Bruno;0;2;13;17;0
+3;1;Licenciatura em Pedagogia;Educação de Pessoas Jovens e Adultas;30;6;Eliane R Andrade;0;2;13;17;0
+3;1;Licenciatura em Pedagogia;Epistemologia;50;4;Baptiste Grasset;0;2;13;17;0
+3;1;Licenciatura em Pedagogia;Gestão Educacional;50;5;Ana Cristina P de Oliveira;0;2;13;17;0
+3;1;Licenciatura em Pedagogia;Introdução a Filosofia;50;1;Rodrigo Dantas;0;2;13;17;91210
+3;1;Licenciatura em Pedagogia;Língua Brasileira de Sinais;50;11;Rachel C Colacique;0;2;13;17;0
+3;1;Licenciatura em Pedagogia;Psicologia da Infância;50;2;Claudia Andrade;0;2;13;17;0
+3;1;Licenciatura em Pedagogia;Est Sup Gestão Educacional;15;7;Olivia Maria C Silveira;0;2;17;18;0
+3;1;Licenciatura em Pedagogia;Ciência da Comunicação I;25;10;Adriana Hoffmann;0;2;18;20;0
+3;1;Licenciatura em Pedagogia;Educação e Sociologia;50;2;Monica Dias P Ferreira;0;2;18;22;0
+3;1;Licenciatura em Pedagogia;Educação e Trabalho;50;5;Dalton Jose Alves;0;2;18;22;0
+3;1;Licenciatura em Pedagogia;Epistemologia;50;4;Marcelo Guimaraes;0;2;18;22;0
+3;1;Licenciatura em Pedagogia;Introdução a Filosofia;50;1;Samir Haddad;0;2;18;22;91210
+3;1;Licenciatura em Pedagogia;Introdução a Psicologia;50;11;Ricardo Salztrager;0;2;18;22;0
+3;1;Licenciatura em Pedagogia;Metod da Pesq em Educação;30;6;Claudia Miranda;0;2;18;22;0
+3;1;Licenciatura em Pedagogia;Pensamento e Linguagem;50;3;Andrea Martello;0;2;18;22;0
+3;1;Licenciatura em Pedagogia;Psicologia Soc da Educação;30;10;Claudia Andrade e Gabriela Scramingnon;0;2;18;20;0
+3;1;Licenciatura em Pedagogia;Dinâmica e Org Escolar;50;10;Paloma R de Oliveira;0;3;8;12;0
+3;1;Licenciatura em Pedagogia;Educação Especial;50;11;Allan R Damasceno;0;3;8;12;0
+3;1;Licenciatura em Pedagogia;Psicologia e Educação;50;11;Lauro Barbosa e Lucia Perez;0;3;8;12;0
+3;1;Licenciatura em Pedagogia;Dinâmica e Org Escolar;50;11;Luiz Carlos de Souza;0;3;13;17;0
+3;1;Licenciatura em Pedagogia;Educação e Saude;50;1;Aguardando professor;0;3;13;15;91210
+3;1;Licenciatura em Pedagogia;Educação e Sociologia;50;2;Monica Dias P Ferreira;0;3;13;17;0
+3;1;Licenciatura em Pedagogia;Educação e Trabalho;50;5;Dalton Jose Alves;0;3;13;17;0
+3;1;Licenciatura em Pedagogia;Língua Brasileira de Sinais;50;11;Augusto M dos Santos;0;3;13;17;0
+3;1;Licenciatura em Pedagogia;Literatura na Form do Leitor;30;10;Marcela A Fernandez;0;3;13;15;0
+3;1;Licenciatura em Pedagogia;Pensamento Educ Brasileiro;50;3;Paloma R de Oliveira;0;3;13;15;0
+3;1;Licenciatura em Pedagogia;Educação e Economia Politica;50;3;Diogenes Pinheiro;0;3;15;17;0
+3;1;Licenciatura em Pedagogia;Estagio EJA;30;6;Eliane R Andrade;0;3;15;17;0
+3;1;Licenciatura em Pedagogia;Introd aos Est Cient em Educação;50;1;Patricia Flavia Mota;0;3;15;17;91210
+3;1;Licenciatura em Pedagogia;Literatura na Escola;30;8;Marcela A Fernandez;0;3;15;17;0
+3;1;Licenciatura em Pedagogia;Psicologia Institucional;30;9;Francisco R de Farias;0;3;15;17;0
+3;1;Licenciatura em Pedagogia;Curriculo;50;3;Claudia Miranda;0;3;18;22;0
+3;1;Licenciatura em Pedagogia;Dinâmica e Org Escolar;50;11;Paloma R de Oliveira;0;3;18;22;0
+3;1;Licenciatura em Pedagogia;Educ de Pessoas Jovens e Adultas;50;6;Aguardando professor;0;3;18;22;0
+3;1;Licenciatura em Pedagogia;Gestão Educacional;50;5;Olivia Maria C Silveira;0;3;18;22;0
+3;1;Licenciatura em Pedagogia;Introdução aos Est Cient em Educação;50;1;Patricia Flavia Mota;0;3;18;20;91210
+3;1;Licenciatura em Pedagogia;Língua Brasileira de Sinais;50;11;Augusto M dos Santos;0;3;18;22;0
+3;1;Licenciatura em Pedagogia;Língua Portuguesa na Educação;45;7;Alberto Roiphe;0;3;18;22;0
+3;1;Licenciatura em Pedagogia;Politica Educacional;50;2;Bruno Adriano R da Silva;0;3;18;22;0
+3;1;Licenciatura em Pedagogia;Psicologia Institucional;50;9;Francisco R de Farias;0;3;18;20;0
+3;1;Licenciatura em Pedagogia;Educação e Saude;50;1;Aguardando professor;0;3;20;22;91210
+3;1;Licenciatura em Pedagogia;Educ Fund em Tempo Integral;40;10;Carlos Diniz Junior;0;3;20;22;0
+3;1;Licenciatura em Pedagogia;Introdução a Psicologia;50;11;Francisco R de Farias;0;4;10;13;91205
+3;1;Licenciatura em Pedagogia;Educação Pop e Mov Sociais;30;8;Diogenes Pinheiro;0;4;13;17;0
+3;1;Licenciatura em Pedagogia;Estatistica Aplicada a Educação;50;4;Andrea Thees Messer;0;4;13;17;0
+3;1;Licenciatura em Pedagogia;Metod da Pesq em Educação;50;6;Leonardo Villela de Castro;0;4;13;17;0
+3;1;Licenciatura em Pedagogia;Pensamento e Linguagem;50;3;Lauro Barbosa;0;4;13;17;0
+3;1;Licenciatura em Pedagogia;Politica Educacional;50;2;Bruno Adriano R da Silva;0;4;13;17;0
+3;1;Licenciatura em Pedagogia;Psicologia e Educação;50;1;Andrea Martello;0;4;13;17;91210
+3;1;Licenciatura em Pedagogia;Psicologia e Educação ;50;11;Ricardo Salztrager;0;4;13;17;0
+3;1;Licenciatura em Pedagogia;Antropologia Cultural;50;1;Amir Geiger;0;4;18;22;91210
+3;1;Licenciatura em Pedagogia;Didatica;50;3;Adriana Bruno;0;4;18;22;0
+3;1;Licenciatura em Pedagogia;Educ Pop e Mov Sociais;50;8;Aguardando professor;0;4;18;22;0
+3;1;Licenciatura em Pedagogia;Estatistica Aplicada a Educação;50;4;Andrea Thees Messer;0;4;18;22;0
+3;1;Licenciatura em Pedagogia;Psicologia da Infância;50;2;Claudia Andrade;0;4;18;22;0
+3;1;Licenciatura em Pedagogia;Curriculo;30;11;Patricia Flavia Mota;0;5;8;12;0
+3;1;Licenciatura em Pedagogia;Dinâmica e Org Escolar;50;3;Jose Damiro de Moraes;0;5;13;17;0
+3;1;Licenciatura em Pedagogia;Educação e Filosofia;50;2;Tiago Oliveira;0;5;13;17;0
+3;1;Licenciatura em Pedagogia;Educação Especial;50;4;Allan R Damasceno;0;5;13;17;0
+3;1;Licenciatura em Pedagogia;Est Sup Gestão Educacional;30;7;Ana Cristina P de Oliveira;0;5;13;15;0
+3;1;Licenciatura em Pedagogia;História das Inst Escolares;50;1;Jane S da Silva;0;5;13;17;91210
+3;1;Licenciatura em Pedagogia;Língua Brasileira de Sinais;50;9;Augusto M dos Santos;0;5;13;17;0
+3;1;Licenciatura em Pedagogia;Planejamento Educacional;30;6;Luiz Carlos de Souza;0;5;13;15;0
+3;1;Licenciatura em Pedagogia;Ciências Nat na Educação I;30;6;Maria A D Machado;0;5;15;17;0
+3;1;Licenciatura em Pedagogia;Financiamento da Educação;35;7;Carlos Diniz Junior;0;5;15;17;0
+3;1;Licenciatura em Pedagogia;Est Anos Inic do Ens Fund;20;8;Carlos Diniz Junior;0;5;17;18;0
+3;1;Licenciatura em Pedagogia;Didatica;55;3;Andrea Fetzner;0;5;13;17;0
+3;1;Licenciatura em Pedagogia;Didatica;55;3;Andrea Fetzner;0;5;18;22;0
+3;1;Licenciatura em Pedagogia;Educação e Filosofia;50;11;Nailda M da Costa;0;5;18;22;91211
+3;1;Licenciatura em Pedagogia;Educação Especial;50;4;Aguardando professor;0;5;18;22;0
+3;1;Licenciatura em Pedagogia;Financiamento da Educação;35;7;Carlos Diniz Junior;0;5;18;20;0
+3;1;Licenciatura em Pedagogia;História da Educ Brasileira;50;2;Rosimeri da S Pereira;0;5;18;22;0
+3;1;Licenciatura em Pedagogia;História das Inst Escolares;50;1;Jane S da Silva;0;5;18;22;91210
+3;1;Licenciatura em Pedagogia;Planejamento Educacional;30;6;Luiz Carlos de Souza;0;5;18;20;0
+3;1;Licenciatura em Pedagogia;Psicologia e Educação;50;11;Lucia Maria de F Perez;0;5;18;22;0
+3;1;Licenciatura em Pedagogia;Ciências Nat na Educação I;30;6;Maria A D Machado;0;5;20;22;0
+3;1;Licenciatura em Pedagogia;Antropologia Cultural;50;1;Ludmila Maria M Lima;0;6;13;17;91210
+3;1;Licenciatura em Pedagogia;Curriculo;50;3;Aguardando professor;0;6;13;17;0
+3;1;Licenciatura em Pedagogia;Educ a Dist Cie Nat II Inf em Educ;50;7;Leonardo Castro e Celso Sanches e Lelia Medeiros;0;6;13;17;0
+3;1;Licenciatura em Pedagogia;História da Educ Brasileira;50;2;Nailda M da Costa;0;6;13;17;0
+3;1;Licenciatura em Pedagogia;Ciências Soc na Educação I;50;5;Gabriela Scramingnon;0;6;15;17;0
+3;1;Licenciatura em Pedagogia;Estagio EJA;30;6;Eliane R Andrade;0;6;17;18;0
+3;1;Licenciatura em Pedagogia;Educ a Dist Cie Nat II Inf em Educ;50;7;Leonardo Castro e Celso Sanches e Lelia Medeiros;0;6;18;22;0
+3;1;Licenciatura em Pedagogia;Educação e Economia Politica;50;3;Diogenes Pinheiro;0;6;18;20;0
+3;1;Licenciatura em Pedagogia;Literatura na Escola;50;8;Alberto Roiphe;0;6;18;20;0
+3;1;Licenciatura em Pedagogia;Psicologia e Educação;50;1;Lauro Barbosa ;0;6;18;22;91210
+#3;1;Licenciatura em Pedagogia;Est Anos Inic do Ens Fund;30;8;Patricia Flavia Mota;0;7;9;13;0
+4;1;Licenciatura em História;Ensino de História e Cinema;20;1;Flavio Limoncic;0;4;14;17;0
+4;1;Licenciatura em História;Seminario de Pesquisa;30;1;Susana Cesco;0;3;14;17;0
+4;1;Licenciatura em História;Teoria da História;60;1;Pedro Caldas;0;2;8;12;91211
+4;1;Licenciatura em História;Introdução as Ciências Sociais;60;1;Luciana Andressa;0;5;8;12;91211
+4;1;Licenciatura em História;Antiguidade Oriental;60;1;Juliana Marques;0;3;8;12;91211
+4;1;Licenciatura em História;Introdução a Filosofia;60;1;Rossano Pecoraro;0;4;8;12;91211
+4;1;Licenciatura em História;Antiguidade Classica;60;1;Claudia Beltrao;0;6;9;13;91211
+4;1;Licenciatura em História;Civilizacao Islamica;40;2;Paulo Andre;0;4;8;12;0
+4;1;Licenciatura em História;História e Documento;60;2;Anita Almeida;0;6;8;12;0
+4;1;Licenciatura em História;História Medieval II;50;2;Paulo Andre;0;5;8;12;0
+4;1;Licenciatura em História;História Medieval I;50;2;Miriam Coser;0;2;8;12;0
+4;1;Licenciatura em História;História do Brasil I;30;3;Janaina Perrayon;0;4;8;12;0
+4;1;Licenciatura em História;História da America I;30;3;Janaina Perrayon;0;2;8;12;0
+4;1;Licenciatura em História;Memória Cultura e Sociedade;60;3;Marcia Chuva;0;5;8;12;0
+4;1;Licenciatura em História;História Moderna I;60;3;Claudia Santos;0;6;8;12;0
+4;1;Licenciatura em História;Historiografia Contemporânea;60;3;Augusto Carvalho;0;3;8;12;0
+4;1;Licenciatura em História;História do Brasil II;30;4;Silvia Brito;0;4;8;12;0
+4;1;Licenciatura em História;História Moderna II;40;4;Christiane Pagano;0;2;8;12;0
+4;1;Licenciatura em História;Metodologia da História;60;4;Hugo Merlo;0;6;8;12;0
+4;1;Licenciatura em História;História da America II;40;4;Vanderlei Vazelesk;0;3;8;12;0
+4;1;Licenciatura em História;História do Brasil III;50;5;Susana Cesco;0;4;8;12;0
+4;1;Licenciatura em História;Metodologia do Ensino de História;40;5;Marcelo Magalhaes;0;5;8;12;0
+4;1;Licenciatura em História;História da America III;40;5;Flavio Limoncic;0;6;8;12;0
+4;1;Licenciatura em História;História Contemporânea I;60;5;Carlo Romani;0;2;8;12;0
+4;1;Licenciatura em História;História Regional A;20;5;Janaina Perrayon;0;2;14;18;0
+4;1;Licenciatura em História;Tópicos Especiais em História do Brasil;30;5;Hugo Merlo;0;4;8;12;0
+4;1;Licenciatura em História;Tópicos Especiais em História Antiga;30;6;Juliana Marques;0;2;8;11;0
+4;1;Licenciatura em História;História Contemporânea II;40;6;Carlo Romani;0;4;8;12;0
+4;1;Licenciatura em História;História da Africa;60;6;Andrea Marzano;0;3;8;12;0
+4;1;Licenciatura em História;Estagio Curricular I;40;6;Mariana Muaze;0;6;8;12;0
+4;1;Licenciatura em História;História do Brasil IV;30;6;Conceicao Pires;0;5;8;12;0
+4;1;Licenciatura em História;Sem de Pesq em Ens de História;40;7;Mariana Amorim;0;3;8;12;0
+4;1;Licenciatura em História;Patrimonio Historico Brasileiro;40;7;Marcia Chuva;0;4;8;12;0
+4;1;Licenciatura em História;Tópicos Especiais em Teoria da História;30;7;Augusto Carvalho;0;3;14;17;0
+4;1;Licenciatura em História;Tópicos Especiais em Teoria da História A;10;7;Claudia Beltrao;0;5;14;17;0
+4;1;Licenciatura em História;Estagio Curricular II;40;7;Mariana Muaze;0;5;8;12;0
+4;1;Licenciatura em História;Cultura Historica e Documento;40;7;Vanderlei Vazelesk;0;2;8;12;0
+4;1;Licenciatura em História;História da Educação;20;8;Marcelo Magalhaes;0;2;14;18;0
+4;1;Licenciatura em História;Elab de Projetos Culturais;20;8;Leila Bianchi;0;3;14;18;0
+4;1;Licenciatura em História;Curriculo;20;8;Mariana Amorim;0;3;14;18;0
+4;1;Licenciatura em História;História da Hist Brasileira;20;8;Hugo Merlo;0;5;14;18;0
+4;1;Licenciatura em História;Estagio Curricular III;40;8;Mariana Amorim;0;6;8;12;0
+4;1;Licenciatura em História;Sem de Pesq em Hist do Brasil;20;8;Caroline Guebert;0;4;14;18;0
+4;1;Licenciatura em História;Sem de Pesq em Hist Cont;20;8;Pedro Caldas;0;3;14;18;0
+4;1;Licenciatura em História;Sem de Pesq em Pat Cultural;20;8;Leila Bianchi;0;5;14;18;0
+4;1;Licenciatura em História;Sem de Pesq em Hist Medieval;20;8;Miriam Coser;0;4;14;18;0
+5;1;Bacharelado em Museologia;Int a Pesq Artistica nos Museus;30;10;Cecilia Ewbank;0;5;18;22;0
+5;1;Bacharelado em Museologia;Etnomuseologia I;30;10;Vinicius Zacarias;0;3;18;21;0
+5;1;Bacharelado em Museologia;Exposicao e Logistica;40;6;Marcio Rangel;0;3;18;21;0
+5;1;Bacharelado em Museologia;Museologia Memo e Soc II;30;8;Priscilla Arigoni;0;5;14;17;0
+5;1;Bacharelado em Museologia;Tópicos Especiais em Ciência da Inf I;15;10;Claudia Guerra;0;5;18;22;0
+5;1;Bacharelado em Museologia;Tópicos Especiais em Ciência da Inf I;30;2;Claudia Guerra;0;2;8;12;0
+5;1;Bacharelado em Museologia;Estagio Curricular;50;8;Jose Mauro Loureiro;0;5;17;18;0
+5;1;Bacharelado em Museologia;Estagio Curricular;40;10;Jose Mauro Loureiro;0;5;18;19;0
+5;1;Bacharelado em Museologia;Musealizacao do Pat Arqueologico;30;5;Alejandra Saladino;0;3;9;12;0
+5;1;Bacharelado em Museologia;Biodiversidade e Meio Ambiente;30;7;Mariana Ferreira;0;6;9;12;0
+5;1;Bacharelado em Museologia;Biodiversidade e Meio Ambiente;30;10;Mariana Ferreira;0;6;18;21;0
+5;1;Bacharelado em Museologia;Museologia V;50;6;Vinicius Zacarias;0;2;9;12;0
+5;1;Bacharelado em Museologia;Museologia V;50;8;Alejandra Saladino;0;2;18;21;0
+5;1;Bacharelado em Museologia;Museologia e Arte Brasileira I;40;5;Marcia Valeria;0;2;14;17;0
+5;1;Bacharelado em Museologia;Introdução a Ciência da Informação;60;1;Fernanda Valle;0;3;8;12;91212
+5;1;Bacharelado em Museologia;Introdução a Filosofia;60;1;Anna Hartman;0;6;14;18;91212
+5;1;Bacharelado em Museologia;Introdução a Museologia;60;1;Vladimir Sibylla;0;5;9;12;91212
+5;1;Bacharelado em Museologia;Introdução a Sociologia;60;1;Clarisse Gurgel;0;3;14;18;91212
+5;1;Bacharelado em Museologia;Metodologia Científica;60;1;Carmen Irene;0;4;14;18;91212
+5;1;Bacharelado em Museologia;Museologia Pat e Memória;60;1;Vladimir Sibylla;0;6;9;12;91212
+5;1;Bacharelado em Museologia;Museologia Pat e Memória;40;2;Jose Mauro Loureiro;0;5;19;22;0
+5;1;Bacharelado em Museologia;Analise da Informação;60;2;Fernanda Valle;0;2;8;12;0
+5;1;Bacharelado em Museologia;Analise da Informação;40;2;Natalia Romeiro;0;4;18;22;0
+5;1;Bacharelado em Museologia;Antropologia Cultural;30;2;Marcella Beraldo;0;2;14;18;0
+5;1;Bacharelado em Museologia;Antropologia Cultural;40;2;Amir Geiger;0;2;18;22;0
+5;1;Bacharelado em Museologia;Epistemologia;60;2;Kherian Gracher;0;5;14;18;0
+5;1;Bacharelado em Museologia;Epistemologia;40;2;Charles Feitosa;0;3;18;22;0
+5;1;Bacharelado em Museologia;Museologia e Preservacao I;50;2;Junia Silva;0;6;14;17;0
+5;1;Bacharelado em Museologia;Museologia I;40;2;Priscilla Arigoni;1681840;5;9;12;0
+5;1;Bacharelado em Museologia;Museologia I;40;2;Priscilla Arigoni;1681840;5;12;13;0
+5;1;Bacharelado em Museologia;Museologia I;40;2;Ludmila Costa;0;6;18;22;0
+5;1;Bacharelado em Museologia;Antropologia Cultural no Brasil;50;3;Natalia Lago;0;5;8;12;0
+5;1;Bacharelado em Museologia;Antropologia nos Museus;50;3;Regina Abreu;0;5;14;17;0
+5;1;Bacharelado em Museologia;Antropologia nos Museus;50;8;Regina Abreu;0;4;18;21;0
+5;1;Bacharelado em Museologia;Arqueologia e Museus;30;3;Alejandra Saladino;0;2;14;17;0
+5;1;Bacharelado em Museologia;Museologia e Preservacao II;50;3;Junia Silva;0;4;14;18;0
+5;1;Bacharelado em Museologia;Museologia e Preservacao II;40;4;Miriam Oliveira;0;4;18;22;0
+5;1;Bacharelado em Museologia;Museologia II;50;3;Anaildo Baracal;0;3;14;18;0
+5;1;Bacharelado em Museologia;História Moderna II;60;4;Christiane Pagano;1514631;3;9;12;0
+5;1;Bacharelado em Museologia;História Moderna II;60;4;Christiane Pagano;1514631;3;12;13;0
+5;1;Bacharelado em Museologia;História Moderna II;60;4;Claudia Regina;0;3;18;22;0
+5;1;Bacharelado em Museologia;Museologia e Arte Ocidental I;60;2;Ivan Coelho de Sa;1122061;3;10;12;91313
+5;1;Bacharelado em Museologia;Museologia e Arte Ocidental I;60;2;Ivan Coelho de Sa;1122061;4;10;12;91313
+5;1;Bacharelado em Museologia;Museologia e Arte Ocidental II;50;3;Alexandre Pessoa;0;6;9;12;91312
+5;1;Bacharelado em Museologia;Museologia e Arte Ocidental II;40;4;Alexandre Pessoa;0;2;18;21;91312
+5;1;Bacharelado em Museologia;Museologia e Arte Ocidental III;50;4;Cecilia Ewbank;0;5;14;18;91314
+5;1;Bacharelado em Museologia;Museologia e Arte Brasileira II;40;3;Miriam Oliveira;0;4;9;12;91312
+5;1;Bacharelado em Museologia;Museologia e Arte Brasileira II;40;8;Marcia Valeria;0;3;18;21;91312
+5;1;Bacharelado em Museologia;Museologia e Arte Brasileira III;30;7;Vinicius Zacarias;0;3;14;17;91313
+5;1;Bacharelado em Museologia;Museologia e Arte Ocidental IV;30;6;Manon Salles;3434620;5;9;12;91313
+5;1;Bacharelado em Museologia;Museologia e Arte Ocidental IV;30;6;Manon Salles;3434620;5;12;13;91313
+#5;1;Bacharelado em Museologia;Museologia e Arte Ocidental IV;30;6;Manon Salles;3434620;6;18;22;91313
+5;1;Bacharelado em Museologia;Museologia e Comunicação I;50;4;Elton Souza;0;3;14;17;0
+5;1;Bacharelado em Museologia;Museologia e Comunicação I;40;6;Elton Souza;0;3;18;21;0
+5;1;Bacharelado em Museologia;Museologia III;50;4;Mario Chagas;0;4;14;17;0
+5;1;Bacharelado em Museologia;Museologia III;40;4;Mario Chagas e Vinicius Zacarias;0;5;18;21;0
+5;1;Bacharelado em Museologia;História Contemporânea I;60;5;Edgar Leite;0;5;8;12;0
+5;1;Bacharelado em Museologia;História do Brasil I;60;5;Marcos Sanches Guimaraes;398797;6;9;12;0
+5;1;Bacharelado em Museologia;História do Brasil I;60;5;Marcos Sanches Guimaraes;398797;6;12;13;0
+5;1;Bacharelado em Museologia;Museologia e Comunicação II;30;5;Julia Moraes;0;2;9;12;0
+5;1;Bacharelado em Museologia;Museologia e Educação;30;6;Andrea Costa;0;3;13;16;0
+5;1;Bacharelado em Museologia;Museologia e Educação;30;10;Andrea Costa;0;3;18;21;0
+5;1;Bacharelado em Museologia;Museologia IV;40;5;Marcio Rangel;0;3;14;17;0
+5;1;Bacharelado em Museologia;Fund de Geologia e Paleontologia;30;6;Thiago Carelli;0;5;14;17;0
+5;1;Bacharelado em Museologia;História do Brasil II;60;6;Edgar Leite;0;3;8;12;0
+5;1;Bacharelado em Museologia;História do Brasil II;60;6;Silvia Carla Fonseca;0;5;18;22;0
+5;1;Bacharelado em Museologia;Museologia e Comunicação III;40;6;Helena Uzeda e Julia Moraes ;0;4;13;17;0
+5;1;Bacharelado em Museologia;Museologia e Comunicação III;40;8;Anaildo Baracal;0;5;18;22;0
+5;1;Bacharelado em Museologia;Museologia e Comunicação III;40;8;Mario Chagas e Vinicius Zacarias;0;5;18;22;0
+5;1;Bacharelado em Museologia;História do Brasil III;60;7;Lucia Grinberg;0;5;8;12;0
+5;1;Bacharelado em Museologia;Metod da Pesq Aplic a Museologia;30;7;Jose Mauro Loureiro;0;5;14;17;0
+5;1;Bacharelado em Museologia;Museologia e Comunicação IV;50;7;Jose Mauro Loureiro;1558571;2;9;11;0
+5;1;Bacharelado em Museologia;Museologia e Comunicação IV;50;7;Julia Moraes e Anaildo Baracal e Helena Uzeda;1558571;2;14;16;0
+5;1;Bacharelado em Museologia;Museologia e Comunicação IV;50;7;Julia Moraes e Anaildo Baracal e Helena Uzeda;1558571;4;16;18;0
+5;1;Bacharelado em Museologia;Museologia VI;50;7;Andrea Costa;0;3;9;12;0
+5;1;Bacharelado em Museologia;Patrimonio Natural;50;8;Deusana Machado;1055565;2;9;12;0
+5;1;Bacharelado em Museologia;Patrimonio Natural;50;8;Deusana Machado;1055565;2;12;13;0
+5;1;Bacharelado em Museologia;Museologia Aplic a Acervos I Indumentaria;30;4;Manon Salles;0;5;18;22;0
+5;1;Bacharelado em Museologia;Museologia Aplic a Acervos II Indumentaria;30;8;Ludmila Costa;2341600;6;9;12;0
+5;1;Bacharelado em Museologia;Museologia Aplic a Acervos II Indumentaria;30;8;Ludmila Costa;2341600;6;12;13;0
+6;1;Bacharelado em Servico Social;Estagio Supervisionado I;20;5;Morena Gomes;0;5;18;22;0
+6;1;Bacharelado em Servico Social;Tópicos Especiais em Servico Social;40;7;Rafaela Ribeiro;0;5;18;22;0
+6;1;Bacharelado em Servico Social;Introdução a Filosofia;30;1;Eduardo Cruz;0;3;18;22;91318
+6;1;Bacharelado em Servico Social;Introdução as Ciências Sociais;30;1;Aguardando professor;0;2;18;22;91318
+6;1;Bacharelado em Servico Social;Formacao Historica do Brasil;30;2;Morena Marques;0;3;18;22;0
+6;1;Bacharelado em Servico Social;Introdução ao Servico Social;30;1;Rafaela Ribeiro;0;6;18;22;91318
+6;1;Bacharelado em Servico Social;Teoria Politica ;30;1;Rodrigo Castelo;0;5;18;22;91318
+6;1;Bacharelado em Servico Social;Economia Politica;20;1;Pedro Rocha;0;4;18;22;91318
+6;1;Bacharelado em Servico Social;Servico Social I;20;2;Natalia Perdomo;0;4;18;22;0
+6;1;Bacharelado em Servico Social;Oficina de Extensao ;30;2;Vanessa Bezerra;0;6;18;22;0
+6;1;Bacharelado em Servico Social;Trab e Questao Soc no Brasil;20;3;Rodrigo Castelo;0;2;18;22;0
+6;1;Bacharelado em Servico Social;Feminismo e Rel Pat de Genero;50;5;Renata Costa;0;2;18;22;0
+6;1;Bacharelado em Servico Social;Direito e Legislacao Social;20;2;Aguardando professor;0;5;18;22;0
+6;1;Bacharelado em Servico Social;Politica Social I;20;3;Natalia Perdomo;0;3;18;22;0
+6;1;Bacharelado em Servico Social;Estado Classe e Movs Sociais ;20;4;Aguardando professor;0;5;18;22;0
+6;1;Bacharelado em Servico Social;Fundamentos da Ética;30;3;Carla Sartor;0;5;18;22;0
+6;1;Bacharelado em Servico Social;Ética Profissional;20;4;Carla Sartor;0;6;18;22;0
+6;1;Bacharelado em Servico Social;Servico Social II;20;3;Bruno Jose;0;4;18;22;0
+6;1;Bacharelado em Servico Social;Servico Social III;20;4;Natalia Perdomo;0;2;18;22;0
+6;1;Bacharelado em Servico Social;Politica Social II;20;4;Bruno Jose;0;3;18;22;0
+6;1;Bacharelado em Servico Social;Serv Social e Proc de Trabalho;20;4;Renata Costa;0;4;18;22;0
+6;1;Bacharelado em Servico Social;Estagio Supervisionado II;15;6;Giselle Souza;0;5;18;22;0
+6;1;Bacharelado em Servico Social;Metod da Pesq Científica;20;6;Aguardando professor;0;2;18;22;0
+6;1;Bacharelado em Servico Social;Metodos Tec e Inst do Serv Social;20;5;Aguardando professor;0;6;18;22;0
+6;1;Bacharelado em Servico Social;Servico Social IV;30;5;Aguardando professor;0;4;18;22;0
+6;1;Bacharelado em Servico Social;Politica Social III;30;5;Giselle Souza;0;3;18;22;0
+6;1;Bacharelado em Servico Social;Planej e Gestão de Politicas Pub;20;6;Lobelia Faceira;0;6;18;22;0
+6;1;Bacharelado em Servico Social;Racismo Est e Soc Capitalista;50;6;Vanessa Bezerra;0;3;18;22;0
+6;1;Bacharelado em Servico Social;Aval e Monit de Politicas Publicas;30;7;Lobelia Faceira;0;4;18;22;0
+7;1;Bacharelado em Turismo;Projeto de TCC;20;8;Joice Lavandoski;0;5;8;12;0
+7;1;Bacharelado em Turismo;Empreend Inovacao e Turismo;25;8;Luciano Santos;0;4;8;12;0
+7;1;Bacharelado em Turismo;Turismo em Espaco Rural;25;8;Telma Bassetti;0;3;8;12;0
+7;1;Bacharelado em Turismo;Gerenciamento de Proj em Turismo;35;6;Luciano Santos;0;6;8;12;0
+7;1;Bacharelado em Turismo;Turismo e Estudos de Genero;35;6;Telma Bassetti;0;5;8;12;0
+7;1;Bacharelado em Turismo;Gastronomia e Turismo;35;6;Joice Lavandoski;0;4;8;12;0
+7;1;Bacharelado em Turismo;Gestão Ambiental do Turismo;35;6;Eloise Botelho;0;3;8;12;0
+7;1;Bacharelado em Turismo;Mkt Turismo e Midias Sociais;35;6;Izabel Faria;0;2;8;12;0
+7;1;Bacharelado em Turismo;Turismo Ambiente e Sociedade;30;4;Eloise Botelho;0;4;14;18;0
+7;1;Bacharelado em Turismo;Temas Emergentes em Turismo I;30;4;Luiz Alexandre Mees;0;2;14;18;0
+7;1;Bacharelado em Turismo;Fundamentos da História para o Turismo;40;4;Vera Borges;0;6;8;12;0
+7;1;Bacharelado em Turismo;Segmentacao e Turismo;40;4;Tiago Juliano;0;5;8;12;0
+7;1;Bacharelado em Turismo;Planej e Org do Turismo;40;4;Tania Omena;0;4;8;12;0
+7;1;Bacharelado em Turismo;Turismo Artes e Arquitetura;40;4;Simone Feigelson;0;3;8;12;0
+7;1;Bacharelado em Turismo;Metodos e Tec de Pesq em Turismo;40;4;Joao Freitas;0;2;8;12;0
+7;1;Bacharelado em Turismo;Ética e Turismo;40;2;Tania Omena;0;4;14;18;0
+7;1;Bacharelado em Turismo;Elab de Roteiros Turisticos;40;2;Luiz Alexandre Mees;0;3;14;18;0
+7;1;Bacharelado em Turismo;Elem Semiol do Disc Aplic ao Turismo;40;2;Izabel Faria;0;2;14;18;0
+7;1;Bacharelado em Turismo;Turismo Direito e Desenvolvimento;40;2;Rodrigo Vilani;0;6;8;12;0
+7;1;Bacharelado em Turismo;Geografia do Turismo;40;2;Jaqueline Elicher;0;5;8;12;0
+7;1;Bacharelado em Turismo;Sociologia do Lazer e do Turismo;40;2;Camila Moraes;0;4;8;12;0
+7;1;Bacharelado em Turismo;Mobilidades;40;2;Joao de Freitas;0;3;8;12;0
+7;1;Bacharelado em Turismo;Turismo Artes e Arquitetura;40;2;Simone Feigelson;0;2;8;12;0
+8;1;Licenciatura em Filosofia;Tópicos Especiais em Temas da Trad Filosofica Mod;30;8;Baptiste Grasset;0;5;18;22;0
+8;1;Licenciatura em Filosofia;SL em Temas da Tradicao Filosofica III;25;6;Ecio Pisetta;0;5;20;22;0
+8;1;Licenciatura em Filosofia;Opt Geral Filosofia e Subjetividade;30;6;Anna Hartmann;0;4;18;22;0
+8;1;Licenciatura em Filosofia;Tópicos Especiais em Temas da Trad Filosofica Cont;30;8;Ecio Pisetta;0;3;18;22;0
+8;1;Licenciatura em Filosofia;TCC 1;15;8;Angela Donini;0;3;16;18;0
+8;1;Licenciatura em Filosofia;SL em Temas do Pensamento Social;25;6;Rodrigo Dantas;0;2;16;18;0
+8;1;Licenciatura em Filosofia;SL em Temas de Metafisica B;25;4;Ecio Pisetta;0;5;18;20;0
+8;1;Licenciatura em Filosofia;Filosofia Medieval;50;2;Eduardo Cruz;0;6;18;22;91215
+8;1;Licenciatura em Filosofia;Filosofia Politica;50;2;Samir Haddad;0;4;18;22;91215
+8;1;Licenciatura em Filosofia;Metafisica;50;2;Guilherme Cecilio;0;5;18;22;91215
+8;1;Licenciatura em Filosofia;Lógica ;50;2;Vania Dutra;0;2;18;22;91215
+8;1;Licenciatura em Filosofia;Filosofia da Cultura Brasileira I;40;2;Rodrigo Dantas;0;3;18;22;91215
+8;1;Licenciatura em Filosofia;Tópicos Especiais em Temas de Metafisica;30;4;Guilherme Cecilio;0;2;18;22;0
+8;1;Licenciatura em Filosofia;Opt Geral Filosofia da História;50;6;Pedro Rocha;0;6;18;22;0
+8;1;Licenciatura em Filosofia;Filosofia da Ciência e da Tec;35;4;Dario Teixeira;0;6;18;22;0
+9;1;Licenciatura em Ciências Sociais;Estágio Supervisionado I II III e IV;60;7;Joao Paulo Castro e Eliane Ribeiro;0;4;8;12;0
+9;1;Licenciatura em Ciências Sociais;Antropologia e Modernidade;60;0;Joao Paulo Castro;0;2;14;18;0
+9;1;Licenciatura em Ciências Sociais;Antropologia da Religião;30;0;Edlaine Gomes;0;6;14;18;0
+9;1;Licenciatura em Ciências Sociais;Estudos sobre Esfera Publica;30;0;Andre Saldanha;0;3;14;18;0
+9;1;Licenciatura em Ciências Sociais;Tópicos Especiais em Estudos Cult e Com I;30;0;Sergio Silva;0;5;14;18;0
+9;1;Licenciatura em Ciências Sociais;Ciências Sociais no Brasil I;30;2;Wagner Damasceno;0;2;8;12;0
+9;1;Licenciatura em Ciências Sociais;Metod do Ensino de Ciências Sociais;25;6;Rejane Prevot;0;6;8;12;0
+9;1;Licenciatura em Ciências Sociais;Antropologia I;30;2;Natalia Lago;0;6;8;12;0
+9;1;Licenciatura em Ciências Sociais;Sociologia Contemporânea;30;4;Clarisse Gurgel;0;6;8;12;0
+9;1;Licenciatura em Ciências Sociais;Estudos Culturais e Comunicação;25;4;Sergio Silva;0;5;8;12;0
+9;1;Licenciatura em Ciências Sociais;Antropologia Contemporânea;30;4;Marcella Beraldo;0;4;8;12;0
+9;1;Licenciatura em Ciências Sociais;Estudos em Memória Social;30;4;Gabriel Souza;0;2;8;12;0
+9;1;Licenciatura em Ciências Sociais;Etnografia em Cont Urbanos;30;0;Fernanda Muller;0;4;14;18;0
+9;1;Licenciatura em Ciências Sociais;Estudos sobre Rel Raciais no Brasil;30;0;Wagner Damasceno;0;3;14;18;0
+9;1;Licenciatura em Ciências Sociais;Teoria SocioLógica I;25;2;Gisele Araujo;0;4;8;12;0
+9;1;Licenciatura em Ciências Sociais;Metod Quant Aplicada as CS;30;2;Andre Saldanha;0;5;8;12;0
