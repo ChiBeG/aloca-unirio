@@ -4,6 +4,7 @@ Sistema de alocação de salas da UNIRIO a partir de arquivos CSV de prédios, s
 
 - **backend/**: API em Python (Django) que lê os CSVs de `backend/entrada/`, faz a alocação e devolve a grade horária.
 - **frontend/**: interface em Next.js. Ela chama o backend pelas rotas `/api/csv-options` e `/api/alocar`.
+- **docs/**: documentação, incluindo o diagrama BPMN do processo de alocação (`alocacaoSalasProcesso.bpmn`, feito no Camunda Modeler).
 
 ## Rodando com Docker (recomendado)
 
