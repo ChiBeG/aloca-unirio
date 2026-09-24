@@ -1,10 +1,13 @@
+import os
 from pathlib import Path
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 
-SECRET_KEY = "django-insecure-dev-only-troque-em-producao"
+SECRET_KEY = os.environ.get(
+    "DJANGO_SECRET_KEY", "django-insecure-dev-only-troque-em-producao"
+)
 
-DEBUG = True
+DEBUG = os.environ.get("DJANGO_DEBUG", "true").lower() == "true"
 ALLOWED_HOSTS: list[str] = ["*"]
 
 INSTALLED_APPS = [

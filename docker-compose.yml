@@ -1,0 +1,21 @@
+services:
+  backend:
+    build: ./backend
+    environment:
+      DJANGO_SECRET_KEY: ${DJANGO_SECRET_KEY:-django-insecure-dev-only-troque-em-producao}
+      DJANGO_DEBUG: ${DJANGO_DEBUG:-false}
+    volumes:
+      - ./backend/entrada:/app/entrada:ro
+    ports:
+      - "8000:8000"
+    restart: unless-stopped
+
+  frontend:
+    build: ./frontend
+    environment:
+      DJANGO_BASE_URL: http://backend:8000
+    ports:
+      - "3002:3002"
+    depends_on:
+      - backend
+    restart: unless-stopped
