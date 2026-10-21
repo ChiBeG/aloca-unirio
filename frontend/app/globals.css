@@ -224,6 +224,25 @@ button:disabled {
   color: var(--cyan-soft);
 }
 
+.auth-pill[data-pending="true"] svg {
+  color: var(--warning);
+}
+
+.logout-button {
+  display: grid;
+  width: 34px;
+  height: 34px;
+  place-items: center;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  background: rgba(255, 255, 255, 0.08);
+  color: rgba(248, 250, 252, 0.88);
+}
+
+.logout-button:hover {
+  border-color: var(--cyan-soft);
+  color: white;
+}
+
 .mobile-menu-button {
   display: none;
   width: 40px;
@@ -734,6 +753,11 @@ input:focus,
 .primary-action:hover:not(:disabled) {
   transform: translateY(-1px);
   background: var(--ice);
+}
+
+.login-action {
+  max-width: 320px;
+  margin-top: 18px;
 }
 
 .ghost-action {

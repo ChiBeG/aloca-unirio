@@ -1,12 +1,13 @@
 "use client";
 
-import { Menu, ShieldCheck, X } from "lucide-react";
+import { LogOut, Menu, ShieldAlert, ShieldCheck, X } from "lucide-react";
 import type { Route } from "next";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useEffect, useState } from "react";
 
 import logoHorizontal from "@/assets/identity/unirio-logo-horizontal.png";
+import { fetchCurrentUser, logout, type CurrentUser } from "@/lib/auth-client";
 
 const navItems = [
   { label: "Inicio", href: "/" },
@@ -21,6 +22,7 @@ export function AppNavbar() {
   const pathname = usePathname();
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [isScrolled, setIsScrolled] = useState(false);
+  const [currentUser, setCurrentUser] = useState<CurrentUser | null>(null);
 
   useEffect(() => {
     const handleScroll = () => setIsScrolled(window.scrollY > 10);
@@ -34,6 +36,28 @@ export function AppNavbar() {
   useEffect(() => {
     setIsMobileMenuOpen(false);
   }, [pathname]);
+
+  useEffect(() => {
+    if (pathname === "/login") {
+      setCurrentUser(null);
+      return;
+    }
+
+    void fetchCurrentUser().then((user) => {
+      if (user === "anonymous") {
+        // Cookie de sessao expirado ou invalido no Django.
+        window.location.assign("/login");
+        return;
+      }
+
+      setCurrentUser(user);
+    });
+  }, [pathname]);
+
+  async function handleLogout() {
+    await logout();
+    window.location.assign("/login");
+  }
 
   const isTransparent = pathname === "/" && !isScrolled;
 
@@ -78,10 +102,32 @@ export function AppNavbar() {
         </div>
 
         <div className="navbar-actions">
-          <span className="auth-pill" title="Login depende do backend">
-            <ShieldCheck aria-hidden="true" size={15} />
-            <span>Acesso pendente</span>
-          </span>
+          {currentUser ? (
+            <>
+              <span
+                className="auth-pill"
+                data-pending={!currentUser.temAcesso}
+                title={currentUser.email}
+              >
+                {currentUser.temAcesso ? (
+                  <ShieldCheck aria-hidden="true" size={15} />
+                ) : (
+                  <ShieldAlert aria-hidden="true" size={15} />
+                )}
+                <span>{currentUser.papelLabel ?? "Acesso pendente"}</span>
+              </span>
+
+              <button
+                aria-label="Sair"
+                className="logout-button"
+                onClick={handleLogout}
+                title="Sair"
+                type="button"
+              >
+                <LogOut aria-hidden="true" size={17} />
+              </button>
+            </>
+          ) : null}
 
           <button
             aria-expanded={isMobileMenuOpen}

@@ -1,3 +1,5 @@
+import { getCsrfToken } from "./auth-client";
+
 export type AllocationFormValues = {
   predios: string;
   salas: string;
@@ -75,6 +77,7 @@ export async function requestAllocation(
     method: "POST",
     headers: {
       "Content-Type": "application/json",
+      "X-CSRFToken": getCsrfToken(),
     },
     body: JSON.stringify(values),
   });

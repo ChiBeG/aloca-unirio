@@ -5,6 +5,8 @@ from pathlib import Path
 
 from django.http import HttpRequest, JsonResponse
 
+from contas.permissoes import requer_acesso
+
 from .alocacao import executar_alocacao
 
 
@@ -18,11 +20,13 @@ _DEFAULTS = {
 }
 
 
+@requer_acesso
 def index(request: HttpRequest) -> JsonResponse:
     csvs = sorted([p.name for p in ENTRADA_DIR.glob("*.csv")]) if ENTRADA_DIR.exists() else []
     return JsonResponse({"csvs": csvs, "defaults": _DEFAULTS})
 
 
+@requer_acesso
 def alocar(request: HttpRequest) -> JsonResponse:
     if request.method != "POST":
         return JsonResponse({"error": "Use POST."}, status=405)

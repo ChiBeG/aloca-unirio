@@ -1,6 +1,8 @@
 import { NextResponse } from "next/server";
 
 import {
+  DjangoError,
+  forwardAuthHeaders,
   runAllocationThroughDjango,
   validateAllocationValues,
 } from "@/lib/django-proxy";
@@ -12,7 +14,10 @@ export async function POST(request: Request) {
   try {
     const payload = (await request.json()) as Record<string, string>;
     const values = validateAllocationValues(payload);
-    const { html, cursos, professores, conflitos } = await runAllocationThroughDjango(values);
+    const { html, cursos, professores, conflitos } = await runAllocationThroughDjango(
+      values,
+      forwardAuthHeaders(request),
+    );
 
     if (!html.trim()) {
       return NextResponse.json(
@@ -23,7 +28,8 @@ export async function POST(request: Request) {
 
     return NextResponse.json({ html, cursos, professores, conflitos });
   } catch (error) {
-    return NextResponse.json({ error: getPublicError(error) }, { status: 502 });
+    const status = error instanceof DjangoError ? error.status : 502;
+    return NextResponse.json({ error: getPublicError(error) }, { status });
   }
 }
 

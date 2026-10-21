@@ -6,6 +6,7 @@ import type {
 import { FALLBACK_CSV_OPTIONS } from "./allocation-client";
 
 const DEFAULT_DJANGO_BASE_URL = "http://127.0.0.1:8000";
+const DEFAULT_DJANGO_PUBLIC_URL = "http://localhost:8000";
 const CSV_NAME_PATTERN = /^[A-Za-z0-9._-]+\.csv$/;
 
 type DjangoIndexResponse = {
@@ -28,6 +29,43 @@ export function getDjangoBaseUrl() {
   );
 }
 
+/** Endereco do Django acessado pelo navegador (login via Google). */
+export function getDjangoPublicUrl() {
+  return (
+    process.env.DJANGO_PUBLIC_URL ?? DEFAULT_DJANGO_PUBLIC_URL
+  ).replace(/\/$/, "");
+}
+
+/** Erro do Django que preserva o status HTTP (ex.: 401/403 de autenticacao). */
+export class DjangoError extends Error {
+  constructor(
+    message: string,
+    readonly status: number,
+  ) {
+    super(message);
+  }
+}
+
+/**
+ * Credenciais do navegador repassadas ao Django: o cookie de sessao e,
+ * em metodos que alteram estado, o token CSRF enviado pelo cliente.
+ */
+export function forwardAuthHeaders(request: Request): Record<string, string> {
+  const headers: Record<string, string> = {};
+  const cookie = request.headers.get("cookie");
+  const csrfToken = request.headers.get("x-csrftoken");
+
+  if (cookie) {
+    headers.cookie = cookie;
+  }
+
+  if (csrfToken) {
+    headers["x-csrftoken"] = csrfToken;
+  }
+
+  return headers;
+}
+
 export function validateAllocationValues(
   values: Partial<AllocationFormValues>,
 ): AllocationFormValues {
@@ -46,12 +84,23 @@ export function validateAllocationValues(
   return parsed;
 }
 
-export async function loadCsvOptionsFromDjango(): Promise<CsvOptionsResponse> {
+export async function loadCsvOptionsFromDjango(
+  authHeaders: Record<string, string> = {},
+): Promise<CsvOptionsResponse> {
   try {
     const response = await fetch(`${getDjangoBaseUrl()}/`, {
+      headers: authHeaders,
       cache: "no-store",
       signal: AbortSignal.timeout(2_500),
     });
+
+    if (response.status === 401 || response.status === 403) {
+      const data = (await response.json()) as { error?: string };
+      return {
+        ...FALLBACK_CSV_OPTIONS,
+        warning: data.error ?? "Acesso negado pelo Django.",
+      };
+    }
 
     if (!response.ok) {
       return { ...FALLBACK_CSV_OPTIONS, warning: "Django indisponivel." };
@@ -92,14 +141,25 @@ export type AllocationPayload = {
 
 export async function runAllocationThroughDjango(
   values: AllocationFormValues,
+  authHeaders: Record<string, string> = {},
 ): Promise<AllocationPayload> {
   const response = await fetch(`${getDjangoBaseUrl()}/alocar/`, {
     method: "POST",
-    headers: { "Content-Type": "application/json" },
+    headers: { "Content-Type": "application/json", ...authHeaders },
     body: JSON.stringify(values),
     cache: "no-store",
     signal: AbortSignal.timeout(15_000),
   });
+
+  if (response.status === 401 || response.status === 403) {
+    const data = (await response.json().catch(() => ({}))) as {
+      error?: string;
+    };
+    throw new DjangoError(
+      data.error ?? "Sessao expirada ou acesso negado.",
+      response.status,
+    );
+  }
 
   const data = (await response.json()) as DjangoAlocarResponse;
 
