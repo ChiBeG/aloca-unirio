@@ -14,8 +14,8 @@ Além de aulas regulares, o sistema aloca atividades não letivas: eventos, reun
 
 - **Backend:** Python + Django, expondo API REST (Django REST Framework)
 - **Frontend:** Next.js (App Router) + React + TypeScript, consumindo a API via HTTP
-- **Banco:** MySQL via Django ORM
-- **Auth:** autenticação e autorização nativas do Django; controle de acesso por perfil
+- **Banco:** MySQL via Django ORM (alvo). Hoje roda em SQLite provisório; a migração para MySQL é a próxima etapa, então mantenha o código compatível com os dois (nada de SQL específico do SQLite)
+- **Auth:** login via Google restrito a `@edu.unirio.br` (django-allauth, app `contas`); autorização por perfil (`contas.Perfil`), com permissões checadas no backend. O admin do Django usa usuário e senha só para o superusuário inicial
 - Comunicação frontend ↔ backend via HTTPS
 
 Frontend e backend são aplicações independentes (duas bases de código).
@@ -67,6 +67,13 @@ Salas pertencem a prédios/unidades. A visibilidade de cada usuário depende do 
 - Alocação em tempo aceitável e suporte a crescimento de unidades/salas
 - Acessibilidade para usuários com deficiência visual no frontend
 - Código documentado e fácil de manter
+
+## Modelo de dados
+
+Os models da alocação ficam no app `alocador` e são a fonte de verdade do schema (o `context/SCRIPTS_V2.sql` é só referência). Antes de mexer neles, leia:
+
+- `docs/decisoes-modelo-dados.md`: o que veio do script V2, dos requisitos e dos CSVs, e por que cada decisão foi tomada
+- `docs/pendencias.md`: decisões em aberto (P1–P10), como Centro/Decano/Diretor, disciplina × turma e semestre
 
 ## Pontos em aberto na especificação
 
