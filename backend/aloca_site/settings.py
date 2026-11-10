@@ -120,6 +120,9 @@ CSRF_COOKIE_SAMESITE = "Lax"
 SECURE_COOKIES = os.environ.get("DJANGO_SECURE_COOKIES", str(not DEBUG)).lower() == "true"
 SESSION_COOKIE_SECURE = SECURE_COOKIES
 CSRF_COOKIE_SECURE = SECURE_COOKIES
+# Atrás do proxy reverso o Django recebe HTTP; sem isto o allauth envia ao Google
+# um redirect_uri "http://..." e o login falha com redirect_uri_mismatch.
+ACCOUNT_DEFAULT_HTTP_PROTOCOL = "https" if SECURE_COOKIES else "http"
 CSRF_TRUSTED_ORIGINS = [FRONTEND_URL]
 
 LOGGING = {
