@@ -27,8 +27,11 @@ def _inteiro(valor) -> bool:
     return isinstance(valor, int) and not isinstance(valor, bool)
 
 
-def _movimento_valido(mov) -> bool:
-    return isinstance(mov, dict) and _inteiro(mov.get("disciplina")) and _inteiro(mov.get("sala"))
+def _movimento_valido(mov, permite_sem_sala: bool = False) -> bool:
+    if not isinstance(mov, dict) or not _inteiro(mov.get("disciplina")):
+        return False
+    sala = mov.get("sala")
+    return _inteiro(sala) or (permite_sem_sala and "sala" in mov and sala is None)
 
 
 def _validar_ajustes(bruto) -> list[dict] | None:
@@ -42,7 +45,9 @@ def _validar_ajustes(bruto) -> list[dict] | None:
         if not _movimento_valido(op):
             return None
         realocacoes = op.get("realocacoes") or []
-        if not isinstance(realocacoes, list) or not all(_movimento_valido(r) for r in realocacoes):
+        if not isinstance(realocacoes, list) or not all(
+            _movimento_valido(r, permite_sem_sala=True) for r in realocacoes
+        ):
             return None
         nome = op.get("nome")
         if nome is not None and not isinstance(nome, str):

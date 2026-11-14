@@ -11,8 +11,19 @@ import type {
   AlocacaoItem,
   AllocationFormValues,
   Movimento,
+  Realocacao,
   SalaInfo,
 } from "./allocation-client";
+
+/**
+ * Escolha "deixar sem sala" para uma disciplina deslocada. Codigos de sala sao
+ * positivos, entao -1 nunca colide; vira `sala: null` no ajuste.
+ */
+export const SEM_SALA = -1;
+
+function destinoDaEscolha(escolha: number | undefined): number | null {
+  return escolha == null || escolha === SEM_SALA ? null : escolha;
+}
 
 export const DIAS: Record<number, string> = {
   2: "Segunda",
@@ -79,11 +90,40 @@ export function salasLivresParaDeslocada(
     { disciplina: alvo.id, sala: salaDestino },
     ...deslocadas
       .filter((d) => d.id !== deslocada.id)
-      .map((d) => ({ disciplina: d.id, sala: escolhas[d.id] ?? null })),
+      .map((d) => ({ disciplina: d.id, sala: destinoDaEscolha(escolhas[d.id]) })),
     { disciplina: deslocada.id, sala: null },
   ]);
 
   return salas.filter((s) => ocupantes(estado, s.codigo, deslocada).length === 0);
+}
+
+/**
+ * Escolhas iniciais ao soltar o alvo numa sala ocupada: cada deslocada vai para
+ * a sala de onde o alvo saiu (troca), se ela estiver livre no horario dela.
+ */
+export function escolhasDeTroca(
+  alocacoes: AlocacaoItem[],
+  salas: SalaInfo[],
+  alvo: AlocacaoItem,
+  salaDestino: number,
+): Record<number, number | undefined> {
+  const escolhas: Record<number, number | undefined> = {};
+  if (alvo.sala == null) return escolhas;
+
+  const deslocadas = ocupantes(alocacoes, salaDestino, alvo);
+  for (const d of deslocadas) {
+    const livres = salasLivresParaDeslocada(
+      alocacoes,
+      salas,
+      alvo,
+      salaDestino,
+      d,
+      escolhas,
+      deslocadas,
+    );
+    if (livres.some((s) => s.codigo === alvo.sala)) escolhas[d.id] = alvo.sala;
+  }
+  return escolhas;
 }
 
 /** Monta o ajuste se a operacao for valida; senao devolve o motivo. */
@@ -100,12 +140,16 @@ export function montarAjuste(
   }
 
   const deslocadas = ocupantes(alocacoes, salaDestino, alvo);
-  const realocacoes: Movimento[] = [];
+  const realocacoes: Realocacao[] = [];
 
   for (const d of deslocadas) {
     const escolhida = escolhas[d.id];
     if (escolhida == null) {
-      return { motivo: `Escolha uma sala para '${d.disciplina}'.` };
+      return { motivo: `Escolha uma sala para '${d.disciplina}' ou deixe-a sem sala.` };
+    }
+    if (escolhida === SEM_SALA) {
+      realocacoes.push({ disciplina: d.id, sala: null });
+      continue;
     }
 
     const livres = salasLivresParaDeslocada(
@@ -152,13 +196,19 @@ function isMovimento(value: unknown): value is Movimento {
   return Number.isInteger(disciplina) && Number.isInteger(sala);
 }
 
+function isRealocacao(value: unknown): value is Realocacao {
+  if (typeof value !== "object" || value === null) return false;
+  const { disciplina, sala } = value as Record<string, unknown>;
+  return Number.isInteger(disciplina) && (sala === null || Number.isInteger(sala));
+}
+
 export function isAjuste(value: unknown): value is Ajuste {
   if (!isMovimento(value)) return false;
   const { nome, realocacoes } = value as unknown as Record<string, unknown>;
   return (
     typeof nome === "string" &&
     Array.isArray(realocacoes) &&
-    realocacoes.every(isMovimento)
+    realocacoes.every(isRealocacao)
   );
 }
 

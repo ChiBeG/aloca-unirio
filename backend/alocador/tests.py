@@ -205,6 +205,21 @@ class AjustesManuaisTests(SimpleTestCase):
         self.assertIn("CSV mudou", resultado["ajustes_ignorados"][0]["motivo"])
         self.assertIsNone(self.sala(Y))
 
+    def test_deslocada_pode_ficar_sem_sala(self):
+        resultado = self.rodar(
+            [{"disciplina": Y, "sala": A, "realocacoes": [{"disciplina": X, "sala": None}]}]
+        )
+        self.assertEqual(resultado["ajustes_ignorados"], [])
+        self.assertEqual((self.sala(Y), self.sala(X)), (A, None))
+        self.assertTrue(self.por_id[X]["manual"])
+        self.assertEqual(len(resultado["conflitos"]), 1)
+        self.assertIn("X (Curso)", resultado["conflitos"][0])
+
+    def test_principal_nao_pode_ficar_sem_sala(self):
+        resultado = self.rodar([{"disciplina": X, "sala": None}])
+        self.assertEqual(len(resultado["ajustes_ignorados"]), 1)
+        self.assertEqual(self.sala(X), A)
+
     def test_ajustes_aplicados_em_ordem(self):
         self.rodar([{"disciplina": Y, "sala": B}, {"disciplina": Y, "sala": C}])
         self.assertEqual(self.sala(Y), C)
@@ -259,8 +274,17 @@ class AlocarViewTests(TestCase):
     def test_formato_invalido(self):
         self.com_papel(Papel.OPERADOR)
         for ajustes in ("x", [{"disciplina": "1", "sala": 2}], [{"disciplina": 1}],
-                        [{"disciplina": 1, "sala": 2, "realocacoes": [{}]}]):
+                        [{"disciplina": 1, "sala": None}],
+                        [{"disciplina": 1, "sala": 2, "realocacoes": [{}]}],
+                        [{"disciplina": 1, "sala": 2, "realocacoes": [{"disciplina": 3}]}]):
             self.assertEqual(self.post({"ajustes": ajustes}).status_code, 400, ajustes)
+
+    def test_realocacao_sem_sala_e_aceita(self):
+        self.com_papel(Papel.OPERADOR)
+        ajustes = [
+            {"disciplina": 1, "sala": 91202, "realocacoes": [{"disciplina": 2, "sala": None}]}
+        ]
+        self.assertEqual(self.post({"ajustes": ajustes}).status_code, 200)
 
     def test_me_informa_permissao_de_ajuste(self):
         self.com_papel(Papel.DIRETOR)

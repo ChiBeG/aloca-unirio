@@ -2,9 +2,12 @@
 
 import { AlertTriangle, ArrowRightLeft, X } from "lucide-react";
 import { useEffect, useId, useMemo, useRef, useState } from "react";
+import { createPortal } from "react-dom";
 
+import { SalaCards, classificarSala } from "@/components/sala-cards";
 import type { Ajuste, AlocacaoItem, SalaInfo } from "@/lib/allocation-client";
 import {
+  SEM_SALA,
   descreverHorario,
   montarAjuste,
   ocupantes,
@@ -18,21 +21,11 @@ type Props = {
   salas: SalaInfo[];
   onCancel: () => void;
   onConfirm: (ajuste: Ajuste) => void;
+  /** Sala ja escolhida (ex.: soltou o bloco na grade). Esconde os cartoes de destino. */
+  salaInicial?: number;
+  /** Destinos pre-selecionados das deslocadas (ex.: troca). */
+  escolhasIniciais?: Record<number, number | undefined>;
 };
-
-function porPredio(salas: SalaInfo[]) {
-  const grupos = new Map<string, SalaInfo[]>();
-  for (const sala of salas) {
-    grupos.set(sala.predio, [...(grupos.get(sala.predio) ?? []), sala]);
-  }
-  return Array.from(grupos.entries());
-}
-
-function avisoCapacidade(sala: SalaInfo | undefined, vagas: number) {
-  return sala && sala.capacidade < vagas
-    ? ` · ⚠ ${sala.capacidade} lugares para ${vagas} vagas`
-    : "";
-}
 
 export function ManualAllocationDialog({
   alvo,
@@ -40,11 +33,16 @@ export function ManualAllocationDialog({
   salas,
   onCancel,
   onConfirm,
+  salaInicial,
+  escolhasIniciais,
 }: Props) {
   const tituloId = useId();
-  const primeiroCampo = useRef<HTMLSelectElement>(null);
-  const [salaDestino, setSalaDestino] = useState<number | null>(null);
-  const [escolhas, setEscolhas] = useState<Record<number, number | undefined>>({});
+  const corpo = useRef<HTMLFormElement>(null);
+  const [salaDestino, setSalaDestino] = useState<number | null>(salaInicial ?? null);
+  const [escolhas, setEscolhas] = useState<Record<number, number | undefined>>(
+    escolhasIniciais ?? {},
+  );
+  const [mostrarDestinos, setMostrarDestinos] = useState(salaInicial == null);
 
   const salaPorCodigo = useMemo(
     () => new Map(salas.map((s) => [s.codigo, s])),
@@ -52,7 +50,7 @@ export function ManualAllocationDialog({
   );
 
   useEffect(() => {
-    primeiroCampo.current?.focus();
+    corpo.current?.querySelector<HTMLInputElement>("input[type=radio]:not(:disabled)")?.focus();
   }, []);
 
   useEffect(() => {
@@ -62,6 +60,14 @@ export function ManualAllocationDialog({
     window.addEventListener("keydown", onKey);
     return () => window.removeEventListener("keydown", onKey);
   }, [onCancel]);
+
+  const opcoesDestino = useMemo(
+    () =>
+      salas.map((sala) =>
+        classificarSala(sala, alvo.vagas, ocupantes(alocacoes, sala.codigo, alvo), alvo.sala),
+      ),
+    [alocacoes, alvo, salas],
+  );
 
   const deslocadas = useMemo(
     () => (salaDestino == null ? [] : ocupantes(alocacoes, salaDestino, alvo)),
@@ -80,8 +86,10 @@ export function ManualAllocationDialog({
       : [];
   });
 
-  function escolherDestino(valor: string) {
-    setSalaDestino(valor ? Number(valor) : null);
+  const semSala = deslocadas.filter((d) => escolhas[d.id] === SEM_SALA);
+
+  function escolherDestino(codigo: number) {
+    setSalaDestino(codigo);
     setEscolhas({});
   }
 
@@ -90,7 +98,8 @@ export function ManualAllocationDialog({
     if ("ajuste" in resultado) onConfirm(resultado.ajuste);
   }
 
-  return (
+  // Portal no <body>: o conteudo da pagina tem stacking context proprio, abaixo da navbar.
+  return createPortal(
     <div className="dialog-backdrop" onClick={onCancel}>
       <div
         aria-labelledby={tituloId}
@@ -99,7 +108,7 @@ export function ManualAllocationDialog({
         onClick={(event) => event.stopPropagation()}
         role="dialog"
       >
-        <form onSubmit={confirmar}>
+        <form onSubmit={confirmar} ref={corpo}>
           <header className="manual-dialog-header">
             <div>
               <p className="eyebrow">Alocacao manual</p>
@@ -138,35 +147,30 @@ export function ManualAllocationDialog({
             </div>
           </dl>
 
-          <label className="field">
-            <span>Sala de destino</span>
-            <select
-              onChange={(event) => escolherDestino(event.target.value)}
-              ref={primeiroCampo}
-              value={salaDestino ?? ""}
-            >
-              <option value="">Escolha uma sala</option>
-              {porPredio(salas).map(([predio, lista]) => (
-                <optgroup key={predio} label={predio}>
-                  {lista.map((sala) => {
-                    const ocupada = ocupantes(alocacoes, sala.codigo, alvo);
-                    const atual = sala.codigo === alvo.sala;
-                    return (
-                      <option disabled={atual} key={sala.codigo} value={sala.codigo}>
-                        {rotuloSala(sala)} · {sala.capacidade} lugares
-                        {avisoCapacidade(sala, alvo.vagas)}
-                        {atual
-                          ? " · sala atual"
-                          : ocupada.length > 0
-                            ? ` · ocupada por ${ocupada.map((o) => o.disciplina).join(", ")}`
-                            : " · livre"}
-                      </option>
-                    );
-                  })}
-                </optgroup>
-              ))}
-            </select>
-          </label>
+          {mostrarDestinos ? (
+            <SalaCards
+              legenda="Sala de destino"
+              nome={`destino-${alvo.id}`}
+              onSelect={escolherDestino}
+              opcoes={opcoesDestino}
+              selecionada={salaDestino}
+              vagas={alvo.vagas}
+            />
+          ) : (
+            <div className="manual-dialog-move">
+              <span>
+                Mover para{" "}
+                <strong>{rotuloSala(salaPorCodigo.get(salaDestino ?? -1), salaDestino)}</strong>
+              </span>
+              <button
+                className="row-action"
+                onClick={() => setMostrarDestinos(true)}
+                type="button"
+              >
+                Escolher outra sala
+              </button>
+            </div>
+          )}
 
           {deslocadas.length > 0 ? (
             <section className="manual-dialog-section" aria-label="Disciplinas deslocadas">
@@ -180,8 +184,8 @@ export function ManualAllocationDialog({
               </div>
               <p className="manual-dialog-hint">
                 Duas disciplinas nao podem ocupar a mesma sala no mesmo horario.
-                Escolha para onde vai cada uma. So aparecem salas livres no
-                horario dela.
+                Escolha para onde vai cada uma (so aparecem salas livres no
+                horario dela) ou deixe-a sem sala.
               </p>
 
               {deslocadas.map((d) => {
@@ -197,49 +201,42 @@ export function ManualAllocationDialog({
                 return (
                   <div className="manual-dialog-displaced" key={d.id}>
                     {livres.length === 0 ? (
-                      <div className="inline-alert" role="alert">
-                        <AlertTriangle aria-hidden="true" size={18} />
-                        <span>
-                          Nao ha sala livre para &apos;{d.disciplina}&apos; em{" "}
-                          {descreverHorario(d)}. Escolha outra sala de destino.
-                        </span>
-                      </div>
-                    ) : (
-                      <label className="field">
-                        <span>
-                          {d.disciplina} ({d.curso}) · {descreverHorario(d)} ·{" "}
-                          {d.vagas} vagas
-                        </span>
-                        <select
-                          onChange={(event) =>
-                            setEscolhas((atual) => ({
-                              ...atual,
-                              [d.id]: event.target.value
-                                ? Number(event.target.value)
-                                : undefined,
-                            }))
-                          }
-                          value={escolhas[d.id] ?? ""}
-                        >
-                          <option value="">Escolha a nova sala</option>
-                          {porPredio(livres).map(([predio, lista]) => (
-                            <optgroup key={predio} label={predio}>
-                              {lista.map((sala) => (
-                                <option key={sala.codigo} value={sala.codigo}>
-                                  {rotuloSala(sala)} · {sala.capacidade} lugares
-                                  {avisoCapacidade(sala, d.vagas)}
-                                  {sala.codigo === alvo.sala ? " · troca" : ""}
-                                </option>
-                              ))}
-                            </optgroup>
-                          ))}
-                        </select>
-                      </label>
-                    )}
+                      <p className="manual-dialog-hint">
+                        Nao ha sala livre para &apos;{d.disciplina}&apos; em{" "}
+                        {descreverHorario(d)}. A unica opcao e deixa-la sem sala.
+                      </p>
+                    ) : null}
+                    <SalaCards
+                      legenda={`${d.disciplina} (${d.curso}) · ${descreverHorario(d)} · ${d.vagas} vagas`}
+                      nome={`deslocada-${d.id}`}
+                      onSelect={(codigo) =>
+                        setEscolhas((atual) => ({ ...atual, [d.id]: codigo }))
+                      }
+                      opcoes={livres.map((sala) => classificarSala(sala, d.vagas, [], null))}
+                      selecionada={escolhas[d.id] ?? null}
+                      semSala
+                      vagas={d.vagas}
+                    />
                   </div>
                 );
               })}
             </section>
+          ) : null}
+
+          {semSala.length > 0 ? (
+            <div className="inline-alert" role="status">
+              <AlertTriangle aria-hidden="true" size={18} />
+              <div>
+                <strong>Ficarao sem sala (voltam para pendentes)</strong>
+                <ul className="manual-dialog-violations">
+                  {semSala.map((d) => (
+                    <li key={d.id}>
+                      &apos;{d.disciplina}&apos; · {descreverHorario(d)}
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            </div>
           ) : null}
 
           {violacoes.length > 0 ? (
@@ -273,6 +270,7 @@ export function ManualAllocationDialog({
           </footer>
         </form>
       </div>
-    </div>
+    </div>,
+    document.body,
   );
 }

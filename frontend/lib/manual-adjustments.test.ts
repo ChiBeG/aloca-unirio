@@ -5,7 +5,9 @@ import {
   exportarAjustes,
   importarAjustes,
   montarAjuste,
+  escolhasDeTroca,
   ocupantes,
+  SEM_SALA,
   salasLivresParaDeslocada,
 } from "./manual-adjustments";
 
@@ -85,7 +87,21 @@ describe("montarAjuste", () => {
 
   test("sala ocupada exige escolher destino para cada deslocada", () => {
     expect(montarAjuste(alocacoes, salas, R, A, { [P.id]: B })).toEqual({
-      motivo: "Escolha uma sala para 'Q'.",
+      motivo: "Escolha uma sala para 'Q' ou deixe-a sem sala.",
+    });
+  });
+
+  test("deslocada pode ficar sem sala", () => {
+    expect(montarAjuste(alocacoes, salas, R, A, { [P.id]: SEM_SALA, [Q.id]: C })).toEqual({
+      ajuste: {
+        disciplina: R.id,
+        sala: A,
+        nome: "R",
+        realocacoes: [
+          { disciplina: P.id, sala: null },
+          { disciplina: Q.id, sala: C },
+        ],
+      },
     });
   });
 
@@ -123,7 +139,9 @@ describe("exportar e importar", () => {
     salas: "s.csv",
     disciplinas: "d.csv",
   };
-  const ajustes = [{ disciplina: 2, sala: C, nome: "Y", realocacoes: [] }];
+  const ajustes = [
+    { disciplina: 2, sala: C, nome: "Y", realocacoes: [{ disciplina: 3, sala: null }] },
+  ];
 
   test("ida e volta preserva os ajustes", () => {
     expect(importarAjustes(exportarAjustes(values, ajustes))).toEqual({
@@ -144,3 +162,15 @@ describe("exportar e importar", () => {
     expect(() => importarAjustes(texto)).toThrow(mensagem);
   });
 });
+
+describe("escolhasDeTroca", () => {
+  test("pre-seleciona a sala de origem quando ela fica livre para a deslocada", () => {
+    // R sai de B para A: P e Q (em A) podem ir para B.
+    expect(escolhasDeTroca(alocacoes, salas, R, A)).toEqual({ [P.id]: B, [Q.id]: B });
+  });
+
+  test("disciplina sem sala nao tem troca", () => {
+    expect(escolhasDeTroca(alocacoes, salas, { ...Y, inicio: 8, fim: 10 }, A)).toEqual({});
+  });
+});
+

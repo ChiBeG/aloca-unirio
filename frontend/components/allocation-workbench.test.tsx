@@ -1,4 +1,4 @@
-import { render, screen, waitFor } from "@testing-library/react";
+import { fireEvent, render, screen, waitFor, within } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { afterEach, beforeEach, describe, expect, test, vi } from "vitest";
 
@@ -205,7 +205,13 @@ describe("AllocationWorkbench - ajustes manuais", () => {
     render(<AllocationWorkbench />);
     expect(await screen.findByText("Django online")).toBeInTheDocument();
     await userEvent.click(screen.getByRole("button", { name: /gerar alocacao/i }));
-    await screen.findByTitle("Grade horaria gerada");
+    await screen.findByRole("button", { name: "Grade interativa" });
+  }
+
+  function trilha(sala: number) {
+    const el = document.querySelector<HTMLElement>(`.timeline-track[data-sala="${sala}"]`);
+    if (!el) throw new Error(`trilha ${sala} nao encontrada`);
+    return el;
   }
 
   test("aloca disciplina pendente em sala livre e refaz a rodada com o ajuste", async () => {
@@ -216,7 +222,11 @@ describe("AllocationWorkbench - ajustes manuais", () => {
     const dialog = screen.getByRole("dialog");
     expect(dialog).toHaveTextContent("Y");
 
-    await userEvent.selectOptions(screen.getByLabelText("Sala de destino"), "102");
+    const destino = within(screen.getByRole("group", { name: "Sala de destino" }));
+    expect(destino.getByRole("radio", { name: /CCH-A.*Ocupada.*X/ })).toBeInTheDocument();
+    expect(destino.getByRole("radio", { name: /CCH-B.*Livre, mas pequena.*faltam 5/ })).toBeInTheDocument();
+
+    await userEvent.click(destino.getByRole("radio", { name: /CCH-B/ }));
     expect(dialog).toHaveTextContent("Capacidade insuficiente");
     await userEvent.click(screen.getByRole("button", { name: "Confirmar ajuste" }));
 
@@ -236,13 +246,19 @@ describe("AllocationWorkbench - ajustes manuais", () => {
     await gerar();
 
     await userEvent.click(await screen.findByRole("button", { name: "Alocar manualmente" }));
-    await userEvent.selectOptions(screen.getByLabelText("Sala de destino"), "101");
+    await userEvent.click(
+      within(screen.getByRole("group", { name: "Sala de destino" })).getByRole("radio", {
+        name: /CCH-A/,
+      }),
+    );
 
     const confirmar = screen.getByRole("button", { name: "Confirmar ajuste" });
     expect(confirmar).toBeDisabled();
     expect(screen.getByRole("region", { name: "Disciplinas deslocadas" })).toHaveTextContent("X");
 
-    await userEvent.selectOptions(screen.getByLabelText(/^X \(Curso\)/), "102");
+    const deslocada = within(screen.getByRole("group", { name: /^X \(Curso\)/ }));
+    expect(deslocada.queryByRole("radio", { name: /CCH-A/ })).not.toBeInTheDocument();
+    await userEvent.click(deslocada.getByRole("radio", { name: /CCH-B/ }));
     expect(confirmar).toBeEnabled();
     await userEvent.click(confirmar);
 
@@ -250,6 +266,97 @@ describe("AllocationWorkbench - ajustes manuais", () => {
     expect(corpos[1].ajustes).toEqual([
       { disciplina: 2, sala: 101, nome: "Y", realocacoes: [{ disciplina: 1, sala: 102 }] },
     ]);
+  });
+
+  test("deslocada pode ficar sem sala", async () => {
+    mockFetch(true);
+    await gerar();
+
+    await userEvent.click(await screen.findByRole("button", { name: "Alocar manualmente" }));
+    await userEvent.click(
+      within(screen.getByRole("group", { name: "Sala de destino" })).getByRole("radio", {
+        name: /CCH-A/,
+      }),
+    );
+    const deslocada = within(screen.getByRole("group", { name: /^X \(Curso\)/ }));
+    await userEvent.click(deslocada.getByRole("radio", { name: /Deixar sem sala/ }));
+    expect(screen.getByRole("dialog")).toHaveTextContent("Ficarao sem sala");
+    await userEvent.click(screen.getByRole("button", { name: "Confirmar ajuste" }));
+
+    await waitFor(() => expect(corpos).toHaveLength(2));
+    expect(corpos[1].ajustes).toEqual([
+      { disciplina: 2, sala: 101, nome: "Y", realocacoes: [{ disciplina: 1, sala: null }] },
+    ]);
+  });
+
+  test("grade interativa: clicar na pendente e depois na sala livre move direto", async () => {
+    mockFetch(true);
+    await gerar();
+
+    const bandeja = within(screen.getByRole("complementary", { name: "Disciplinas sem sala no dia" }));
+    await userEvent.click(bandeja.getByText("Y"));
+    expect(screen.getByText(/selecionada\. Clique numa sala/)).toBeInTheDocument();
+    expect(trilha(102).querySelector(".timeline-band")).toHaveAttribute("data-estado", "pequena");
+
+    await userEvent.click(trilha(102));
+    await waitFor(() => expect(corpos).toHaveLength(2));
+    expect(corpos[1].ajustes).toEqual([{ disciplina: 2, sala: 102, nome: "Y", realocacoes: [] }]);
+    expect(screen.queryByRole("dialog")).not.toBeInTheDocument();
+  });
+
+  test("grade interativa: soltar em sala ocupada pergunta para onde vai quem estava la", async () => {
+    mockFetch(true);
+    await gerar();
+
+    const chip = within(screen.getByRole("complementary", { name: "Disciplinas sem sala no dia" })).getByText("Y")
+      .parentElement as HTMLElement;
+    const dados = new Map<string, string>();
+    const dataTransfer = {
+      setData: (k: string, v: string) => dados.set(k, v),
+      getData: (k: string) => dados.get(k) ?? "",
+      effectAllowed: "",
+      dropEffect: "",
+    };
+    fireEvent.dragStart(chip, { dataTransfer });
+    fireEvent.dragOver(trilha(101), { dataTransfer });
+    fireEvent.drop(trilha(101), { dataTransfer });
+
+    const dialog = await screen.findByRole("dialog");
+    expect(dialog).toHaveTextContent("Mover para CCH-A");
+    expect(screen.queryByRole("group", { name: "Sala de destino" })).not.toBeInTheDocument();
+    const deslocada = within(screen.getByRole("group", { name: /^X \(Curso\)/ }));
+    await userEvent.click(deslocada.getByRole("radio", { name: /CCH-B/ }));
+    await userEvent.click(screen.getByRole("button", { name: "Confirmar ajuste" }));
+
+    await waitFor(() => expect(corpos).toHaveLength(2));
+    expect(corpos[1].ajustes).toEqual([
+      { disciplina: 2, sala: 101, nome: "Y", realocacoes: [{ disciplina: 1, sala: 102 }] },
+    ]);
+  });
+
+  test("grade interativa: com uma selecionada, clicar no bloco de sala lotada move para ela", async () => {
+    mockFetch(true);
+    await gerar();
+
+    const bandeja = within(screen.getByRole("complementary", { name: "Disciplinas sem sala no dia" }));
+    await userEvent.click(bandeja.getByText("Y"));
+    await userEvent.click(within(trilha(101)).getByText("X"));
+
+    expect(await screen.findByRole("dialog")).toHaveTextContent("Mover para CCH-A");
+  });
+
+  test("papel sem permissao ve a grade sem poder arrastar", async () => {
+    mockFetch(false);
+    await gerar();
+    expect(document.querySelector(".timeline-block")).not.toHaveAttribute("draggable");
+    expect(screen.queryByText(/Arraste um bloco/)).not.toBeInTheDocument();
+  });
+
+  test("alterna para a grade por sala", async () => {
+    mockFetch(true);
+    await gerar();
+    await userEvent.click(screen.getByRole("button", { name: "Grade por sala" }));
+    expect(screen.getByTitle("Grade horaria gerada")).toBeInTheDocument();
   });
 
   test("reenvia os ajustes salvos na proxima rodada", async () => {

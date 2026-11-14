@@ -216,10 +216,11 @@ def _distribuir_sem_sala_fixa(salas: list[Sala], pendentes: list[Disciplina]) ->
 # Ajustes manuais (aplicados depois da alocação automática)
 #
 # Cada ajuste é uma operação: {"disciplina": id, "sala": codigo, "nome"?: str,
-# "realocacoes": [{"disciplina": id, "sala": codigo}, ...]}. A operação é atômica:
-# ou todas as disciplinas vão para os destinos, ou nada muda. Pode violar a
-# capacidade (RN01, fica marcado), mas nunca deixa duas disciplinas no mesmo
-# horário da mesma sala (RN02): quem é deslocado precisa vir nas realocações.
+# "realocacoes": [{"disciplina": id, "sala": codigo | None}, ...]}. A operação é
+# atômica: ou todas as disciplinas vão para os destinos, ou nada muda. Pode violar
+# a capacidade (RN01, fica marcado), mas nunca deixa duas disciplinas no mesmo
+# horário da mesma sala (RN02): quem é deslocado precisa vir nas realocações,
+# indo para outra sala livre ou ficando sem sala (sala None).
 # ---------------------------------------------------------------------------
 
 def _rotulo_sala(sala: Sala) -> str:
@@ -231,14 +232,18 @@ def _aplicar_operacao(
 ) -> Optional[str]:
     """Aplica uma operação. Devolve None se deu certo ou o motivo da recusa."""
     movimentos = [op] + list(op.get("realocacoes") or [])
-    alvos: list[tuple[Disciplina, Sala]] = []
-    for mov in movimentos:
+    alvos: list[tuple[Disciplina, Optional[Sala]]] = []
+    for indice, mov in enumerate(movimentos):
         disciplina = por_id.get(mov["disciplina"])
         if disciplina is None:
             return f"Disciplina da linha {mov['disciplina']} não existe no CSV."
-        sala = por_codigo.get(mov["sala"])
-        if sala is None:
-            return f"Sala {mov['sala']} não existe no CSV."
+        # Só quem é deslocado pode ficar sem sala; a disciplina principal precisa de uma.
+        if mov["sala"] is None and indice > 0:
+            sala = None
+        else:
+            sala = por_codigo.get(mov["sala"])
+            if sala is None:
+                return f"Sala {mov['sala']} não existe no CSV."
         if any(d is disciplina for d, _ in alvos):
             return f"'{disciplina.disciplina}' aparece duas vezes na mesma operação."
         alvos.append((disciplina, sala))
@@ -257,12 +262,15 @@ def _aplicar_operacao(
 
     motivo = None
     for d, sala in alvos:
+        if sala is None:
+            continue  # deslocada que fica sem sala
         ocupantes = _ocupantes(sala, d)
         if ocupantes:
             nomes = ", ".join(f"'{o.disciplina}' ({_horario(o)})" for o in ocupantes)
             motivo = (
                 f"A sala {_rotulo_sala(sala)} está ocupada por {nomes} no horário de "
-                f"'{d.disciplina}'. Escolha outra sala para quem seria deslocado."
+                f"'{d.disciplina}'. Escolha outra sala para quem seria deslocado "
+                "ou deixe-o sem sala."
             )
             break
         _colocar(sala, d)

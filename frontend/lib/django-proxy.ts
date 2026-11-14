@@ -6,6 +6,7 @@ import type {
   CsvOption,
   CsvOptionsResponse,
   Movimento,
+  Realocacao,
   SalaInfo,
 } from "./allocation-client";
 import { FALLBACK_CSV_OPTIONS } from "./allocation-client";
@@ -104,6 +105,15 @@ function parseMovimento(value: unknown): Movimento | null {
   return { disciplina: disciplina as number, sala: sala as number };
 }
 
+/** Como parseMovimento, mas a deslocada pode ficar sem sala (sala null). */
+function parseRealocacao(value: unknown): Realocacao | null {
+  if (typeof value !== "object" || value === null) return null;
+  const { disciplina, sala } = value as Record<string, unknown>;
+  if (!Number.isInteger(disciplina)) return null;
+  if (sala === null) return { disciplina: disciplina as number, sala: null };
+  return parseMovimento(value);
+}
+
 /** Valida a lista de ajustes manuais antes de repassar ao Django. */
 export function validateAjustes(value: unknown): Ajuste[] {
   if (value === undefined || value === null) return [];
@@ -115,7 +125,7 @@ export function validateAjustes(value: unknown): Ajuste[] {
     const movimento = parseMovimento(item);
     const { nome, realocacoes } = (item ?? {}) as Record<string, unknown>;
     const parsedRealocacoes = Array.isArray(realocacoes)
-      ? realocacoes.map(parseMovimento)
+      ? realocacoes.map(parseRealocacao)
       : realocacoes === undefined
         ? []
         : [null];
@@ -131,7 +141,7 @@ export function validateAjustes(value: unknown): Ajuste[] {
     return {
       ...movimento,
       nome,
-      realocacoes: parsedRealocacoes as Movimento[],
+      realocacoes: parsedRealocacoes as Realocacao[],
     };
   });
 }

@@ -8,16 +8,19 @@ import {
   FileSpreadsheet,
   Filter,
   Hand,
+  LayoutGrid,
   LoaderCircle,
   Play,
   RefreshCw,
   Search,
+  Table2,
   Trash2,
   Undo2,
   Upload,
 } from "lucide-react";
 import { useEffect, useMemo, useRef, useState } from "react";
 
+import { AllocationTimeline } from "@/components/allocation-timeline";
 import { ManualAllocationDialog } from "@/components/manual-allocation-dialog";
 import {
   FALLBACK_CSV_OPTIONS,
@@ -34,8 +37,10 @@ import { fetchCurrentUser } from "@/lib/auth-client";
 import {
   carregarAjustes,
   descreverHorario,
+  escolhasDeTroca,
   exportarAjustes,
   importarAjustes,
+  ocupantes,
   rotuloSala,
   salvarAjustes,
 } from "@/lib/manual-adjustments";
@@ -165,7 +170,12 @@ export function AllocationWorkbench() {
   const [ajustesIgnorados, setAjustesIgnorados] = useState<AjusteIgnorado[]>([]);
   const [runValues, setRunValues] = useState<AllocationFormValues | null>(null);
   const [podeAjustar, setPodeAjustar] = useState(false);
-  const [dialogAlvo, setDialogAlvo] = useState<AlocacaoItem | null>(null);
+  const [dialogo, setDialogo] = useState<{
+    alvo: AlocacaoItem;
+    salaInicial?: number;
+    escolhasIniciais?: Record<number, number | undefined>;
+  } | null>(null);
+  const [visao, setVisao] = useState<"interativa" | "planilha">("interativa");
   const [busca, setBusca] = useState("");
   const [avisoAjustes, setAvisoAjustes] = useState("");
   const importInput = useRef<HTMLInputElement>(null);
@@ -279,8 +289,23 @@ export function AllocationWorkbench() {
     void executar(runValues, novos, false);
   }
 
+  /** Soltou um bloco numa sala da grade interativa. */
+  function moverPara(item: AlocacaoItem, sala: number) {
+    if (item.sala === sala) return;
+    if (ocupantes(alocacoes, sala, item).length === 0) {
+      confirmarAjuste({ disciplina: item.id, sala, nome: item.disciplina, realocacoes: [] });
+      return;
+    }
+    // Sala ocupada: pergunta para onde vai quem estava la (troca pre-selecionada).
+    setDialogo({
+      alvo: item,
+      salaInicial: sala,
+      escolhasIniciais: escolhasDeTroca(alocacoes, salas, item, sala),
+    });
+  }
+
   function confirmarAjuste(ajuste: Ajuste) {
-    setDialogAlvo(null);
+    setDialogo(null);
     setBusca("");
     setAvisoAjustes("");
     atualizarAjustes([...ajustes, ajuste]);
@@ -337,7 +362,7 @@ export function AllocationWorkbench() {
     const extras = ajuste.realocacoes
       .map(
         (r) =>
-          `${alocacaoPorId.get(r.disciplina)?.disciplina ?? `linha ${r.disciplina}`} → ${rotuloSala(salaPorCodigo.get(r.sala), r.sala)}`,
+          `${alocacaoPorId.get(r.disciplina)?.disciplina ?? `linha ${r.disciplina}`} → ${rotuloSala(r.sala == null ? undefined : salaPorCodigo.get(r.sala), r.sala)}`,
       )
       .join("; ");
     return `${principal} (realoca: ${extras})`;
@@ -568,14 +593,45 @@ export function AllocationWorkbench() {
             </div>
           ) : null}
 
-          {filteredHtml ? (
+          {rawHtml && alocacoes.length > 0 ? (
+            <div className="view-switch" role="group" aria-label="Visualizacao da grade">
+              <button
+                aria-pressed={visao === "interativa"}
+                onClick={() => setVisao("interativa")}
+                type="button"
+              >
+                <LayoutGrid aria-hidden="true" size={15} />
+                <span>Grade interativa</span>
+              </button>
+              <button
+                aria-pressed={visao === "planilha"}
+                onClick={() => setVisao("planilha")}
+                type="button"
+              >
+                <Table2 aria-hidden="true" size={15} />
+                <span>Grade por sala</span>
+              </button>
+            </div>
+          ) : null}
+
+          {rawHtml && alocacoes.length > 0 && visao === "interativa" ? (
+            <AllocationTimeline
+              alocacoes={alocacoes}
+              filtros={filters}
+              ocupado={isRunning}
+              onDetalhes={(item) => setDialogo({ alvo: item })}
+              onMover={moverPara}
+              podeAjustar={podeAjustar}
+              salas={salas}
+            />
+          ) : filteredHtml ? (
             <iframe
               className="result-frame"
               sandbox=""
               srcDoc={filteredHtml}
               title="Grade horaria gerada"
             />
-          ) : rawHtml && !filteredHtml ? (
+          ) : rawHtml && !filteredHtml && visao === "planilha" ? (
             <div className="result-state">
               <Filter aria-hidden="true" size={28} />
               <strong>Nenhuma sala corresponde aos filtros</strong>
@@ -583,7 +639,7 @@ export function AllocationWorkbench() {
             </div>
           ) : null}
 
-          {filteredHtml && temMarcacoes ? (
+          {filteredHtml && temMarcacoes && (visao === "planilha" || alocacoes.length === 0) ? (
             <div className="grade-legend" aria-label="Legenda da grade">
               <span className="legend-item legend-manual">Ajuste manual</span>
               <span className="legend-item legend-violacao">
@@ -609,12 +665,15 @@ export function AllocationWorkbench() {
                     <span>
                       {item.disciplina} ({item.curso}) — {descreverHorario(item)} ·{" "}
                       {item.vagas} vagas
+                      {item.manual ? (
+                        <em className="adjustment-reason">Retirada manualmente da sala</em>
+                      ) : null}
                     </span>
                     {podeAjustar ? (
                       <button
                         className="row-action"
                         disabled={isRunning}
-                        onClick={() => setDialogAlvo(item)}
+                        onClick={() => setDialogo({ alvo: item })}
                         type="button"
                       >
                         Alocar manualmente
@@ -717,7 +776,7 @@ export function AllocationWorkbench() {
                         <button
                           className="row-action"
                           disabled={isRunning}
-                          onClick={() => setDialogAlvo(item)}
+                          onClick={() => setDialogo({ alvo: item })}
                           type="button"
                         >
                           {item.sala == null ? "Alocar" : "Mover"}
@@ -780,12 +839,15 @@ export function AllocationWorkbench() {
         </section>
       </div>
 
-      {dialogAlvo ? (
+      {dialogo ? (
         <ManualAllocationDialog
           alocacoes={alocacoes}
-          alvo={dialogAlvo}
-          onCancel={() => setDialogAlvo(null)}
+          alvo={dialogo.alvo}
+          escolhasIniciais={dialogo.escolhasIniciais}
+          key={`${dialogo.alvo.id}-${dialogo.salaInicial ?? "livre"}`}
+          onCancel={() => setDialogo(null)}
           onConfirm={confirmarAjuste}
+          salaInicial={dialogo.salaInicial}
           salas={salas}
         />
       ) : null}

@@ -31,7 +31,13 @@ export type Movimento = {
 export type Ajuste = Movimento & {
   /** Nome da disciplina, para detectar que o CSV mudou desde o ajuste. */
   nome: string;
-  realocacoes: Movimento[];
+  realocacoes: Realocacao[];
+};
+
+/** Para onde vai uma disciplina deslocada; sala null = fica sem sala. */
+export type Realocacao = {
+  disciplina: number;
+  sala: number | null;
 };
 
 export type AlocacaoItem = {

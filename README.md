@@ -381,7 +381,7 @@ Os endpoints do alocador exigem sessão com papel atribuído. Sem login, respond
 
 ### Ajustes manuais
 
-Na tela de alocação, Operador, Diretor e Administrador Superior podem alocar à mão uma disciplina sem sala ou mover uma disciplina já alocada. O ajuste pode usar sala menor que as vagas (fica marcado na grade), mas nunca deixa duas disciplinas na mesma sala no mesmo horário: se a sala estiver ocupada, é preciso escolher outra sala livre para quem estava lá. Os ajustes ficam salvos no navegador para aquela combinação de CSVs, são reaplicados a cada rodada e podem ser exportados e importados em JSON. Cada ajuste é `{ "disciplina": <linha no CSV>, "sala": <código>, "nome": <nome da disciplina>, "realocacoes": [{ "disciplina", "sala" }] }`.
+Na tela de alocação, Operador, Diretor e Administrador Superior podem alocar à mão uma disciplina sem sala ou mover uma disciplina já alocada. O ajuste pode usar sala menor que as vagas (fica marcado na grade), mas nunca deixa duas disciplinas na mesma sala no mesmo horário: se a sala estiver ocupada, quem estava lá precisa ir para outra sala livre ou ficar sem sala (volta para as pendentes). Os ajustes ficam salvos no navegador para aquela combinação de CSVs, são reaplicados a cada rodada e podem ser exportados e importados em JSON. Cada ajuste é `{ "disciplina": <linha no CSV>, "sala": <código>, "nome": <nome da disciplina>, "realocacoes": [{ "disciplina", "sala": <código ou null para sem sala> }] }`.
 - `GET /api/me/`: usuário logado e papel (401 sem sessão). Também emite o cookie `csrftoken`.
 - `POST /api/logout/`: encerra a sessão.
 - `/accounts/google/login/`: inicia o login com Google.
