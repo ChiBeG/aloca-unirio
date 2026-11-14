@@ -56,7 +56,7 @@ describe("AllocationWorkbench", () => {
       screen.getByRole("button", { name: /gerar alocacao/i }),
     );
 
-    const frame = await screen.findByTitle("Previa da grade horaria gerada");
+    const frame = await screen.findByTitle("Grade horaria gerada");
 
     expect(frame).toHaveAttribute(
       "srcdoc",
@@ -106,7 +106,7 @@ describe("AllocationWorkbench", () => {
     );
 
     await waitFor(() =>
-      expect(screen.getByTitle("Previa da grade horaria gerada")).toHaveAttribute(
+      expect(screen.getByTitle("Grade horaria gerada")).toHaveAttribute(
         "srcdoc",
         expect.stringContaining("Sala CCH-203"),
       ),
@@ -141,5 +141,134 @@ describe("AllocationWorkbench", () => {
     expect(await screen.findByRole("alert")).toHaveTextContent(
       "HTML nao foi gerado.",
     );
+  });
+});
+
+describe("AllocationWorkbench - ajustes manuais", () => {
+  const salas = [
+    { codigo: 101, nome: "A", predio: "CCH", capacidade: 40 },
+    { codigo: 102, nome: "B", predio: "CCH", capacidade: 30 },
+  ];
+  const base = {
+    curso: "Curso",
+    professor: "Prof",
+    dia: 2,
+    manual: false,
+    violacoes: [],
+  };
+  const alocacoes = [
+    { ...base, id: 1, disciplina: "X", vagas: 35, inicio: 18, fim: 22, sala: 101 },
+    { ...base, id: 2, disciplina: "Y", vagas: 35, inicio: 18, fim: 22, sala: null },
+  ];
+  let corpos: Array<Record<string, unknown>>;
+
+  function mockFetch(podeAjustar: boolean) {
+    corpos = [];
+    vi.stubGlobal(
+      "fetch",
+      vi.fn(async (input: RequestInfo | URL, init?: RequestInit) => {
+        const url = input.toString();
+        if (url.endsWith("/api/csv-options")) {
+          return Response.json(csvOptionsPayload);
+        }
+        if (url.endsWith("/api/auth/me")) {
+          return Response.json({
+            email: "a@edu.unirio.br",
+            nome: "A",
+            papel: podeAjustar ? "OPERADOR" : "REITORIA",
+            papelLabel: "",
+            temAcesso: true,
+            podeAjustar,
+          });
+        }
+        if (url.endsWith("/api/alocar")) {
+          corpos.push(JSON.parse(String(init?.body)));
+          return Response.json({
+            html: "<html><body><h2>Sala CCH-A</h2></body></html>",
+            cursos: [],
+            professores: [],
+            conflitos: [],
+            alocacoes,
+            salas,
+            ajustesIgnorados: [],
+          });
+        }
+        return Response.json({ error: "unexpected request" }, { status: 500 });
+      }),
+    );
+  }
+
+  beforeEach(() => window.localStorage.clear());
+  afterEach(() => vi.unstubAllGlobals());
+
+  async function gerar() {
+    render(<AllocationWorkbench />);
+    expect(await screen.findByText("Django online")).toBeInTheDocument();
+    await userEvent.click(screen.getByRole("button", { name: /gerar alocacao/i }));
+    await screen.findByTitle("Grade horaria gerada");
+  }
+
+  test("aloca disciplina pendente em sala livre e refaz a rodada com o ajuste", async () => {
+    mockFetch(true);
+    await gerar();
+
+    await userEvent.click(await screen.findByRole("button", { name: "Alocar manualmente" }));
+    const dialog = screen.getByRole("dialog");
+    expect(dialog).toHaveTextContent("Y");
+
+    await userEvent.selectOptions(screen.getByLabelText("Sala de destino"), "102");
+    expect(dialog).toHaveTextContent("Capacidade insuficiente");
+    await userEvent.click(screen.getByRole("button", { name: "Confirmar ajuste" }));
+
+    const esperado = [{ disciplina: 2, sala: 102, nome: "Y", realocacoes: [] }];
+    await waitFor(() => expect(corpos).toHaveLength(2));
+    expect(corpos[0].ajustes).toEqual([]);
+    expect(corpos[1].ajustes).toEqual(esperado);
+    expect(screen.queryByRole("dialog")).not.toBeInTheDocument();
+    expect(screen.getByRole("list", { name: "Ajustes aplicados" })).toHaveTextContent("Y → CCH-B");
+
+    const chave = "aloca:ajustes:unirio-predios.csv|unirio-salas.csv|unirio-disciplinas-20252.csv";
+    expect(JSON.parse(window.localStorage.getItem(chave) ?? "[]")).toEqual(esperado);
+  });
+
+  test("sala ocupada exige escolher para onde vai a disciplina deslocada", async () => {
+    mockFetch(true);
+    await gerar();
+
+    await userEvent.click(await screen.findByRole("button", { name: "Alocar manualmente" }));
+    await userEvent.selectOptions(screen.getByLabelText("Sala de destino"), "101");
+
+    const confirmar = screen.getByRole("button", { name: "Confirmar ajuste" });
+    expect(confirmar).toBeDisabled();
+    expect(screen.getByRole("region", { name: "Disciplinas deslocadas" })).toHaveTextContent("X");
+
+    await userEvent.selectOptions(screen.getByLabelText(/^X \(Curso\)/), "102");
+    expect(confirmar).toBeEnabled();
+    await userEvent.click(confirmar);
+
+    await waitFor(() => expect(corpos).toHaveLength(2));
+    expect(corpos[1].ajustes).toEqual([
+      { disciplina: 2, sala: 101, nome: "Y", realocacoes: [{ disciplina: 1, sala: 102 }] },
+    ]);
+  });
+
+  test("reenvia os ajustes salvos na proxima rodada", async () => {
+    const salvos = [{ disciplina: 2, sala: 102, nome: "Y", realocacoes: [] }];
+    window.localStorage.setItem(
+      "aloca:ajustes:unirio-predios.csv|unirio-salas.csv|unirio-disciplinas-20252.csv",
+      JSON.stringify(salvos),
+    );
+    mockFetch(true);
+    await gerar();
+    expect(corpos[0].ajustes).toEqual(salvos);
+  });
+
+  test("papel sem permissao nao ve controles de ajuste", async () => {
+    mockFetch(false);
+    await gerar();
+
+    expect(await screen.findByText(/disciplina sem sala/)).toBeInTheDocument();
+    expect(screen.queryByRole("button", { name: "Alocar manualmente" })).not.toBeInTheDocument();
+    expect(screen.queryByRole("region", { name: "Ajustes manuais" })).not.toBeInTheDocument();
   });
 });

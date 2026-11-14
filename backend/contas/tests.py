@@ -75,3 +75,36 @@ class AcessoTests(TestCase):
         cliente = Client(enforce_csrf_checks=True)
         cliente.force_login(self.usuario)
         self.assertEqual(cliente.post("/api/logout/").status_code, 403)
+
+
+from django.conf import settings as django_settings
+from django.test import override_settings
+
+_MIDDLEWARE_SEM_LOGIN = list(django_settings.MIDDLEWARE)
+if "contas.middleware.LoginDesativadoMiddleware" not in _MIDDLEWARE_SEM_LOGIN:
+    _MIDDLEWARE_SEM_LOGIN.insert(
+        _MIDDLEWARE_SEM_LOGIN.index("django.contrib.auth.middleware.AuthenticationMiddleware") + 1,
+        "contas.middleware.LoginDesativadoMiddleware",
+    )
+
+
+@override_settings(MIDDLEWARE=_MIDDLEWARE_SEM_LOGIN)
+class LoginDesativadoTests(TestCase):
+    def test_anonimo_vira_operador_de_desenvolvimento(self):
+        dados = self.client.get("/api/me/").json()
+        self.assertEqual(dados["email"], "dev-local@edu.unirio.br")
+        self.assertEqual(dados["papel"], Papel.OPERADOR)
+        self.assertTrue(dados["podeAjustar"])
+        self.assertEqual(self.client.get("/").status_code, 200)
+
+    def test_papel_trocado_no_admin_e_respeitado(self):
+        self.client.get("/api/me/")
+        usuario = get_user_model().objects.get(username="dev-local")
+        usuario.perfil.papel = Papel.REITORIA
+        usuario.perfil.save()
+        self.assertFalse(self.client.get("/api/me/").json()["podeAjustar"])
+
+    def test_login_real_tem_prioridade(self):
+        real = get_user_model().objects.create_user(username="real", email="real@edu.unirio.br")
+        self.client.force_login(real)
+        self.assertEqual(self.client.get("/api/me/").json()["email"], "real@edu.unirio.br")

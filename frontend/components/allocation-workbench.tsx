@@ -4,21 +4,41 @@ import {
   AlertTriangle,
   Building2,
   CheckCircle2,
+  Download,
   FileSpreadsheet,
   Filter,
+  Hand,
   LoaderCircle,
   Play,
   RefreshCw,
+  Search,
+  Trash2,
+  Undo2,
+  Upload,
 } from "lucide-react";
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 
+import { ManualAllocationDialog } from "@/components/manual-allocation-dialog";
 import {
   FALLBACK_CSV_OPTIONS,
+  type Ajuste,
+  type AjusteIgnorado,
+  type AlocacaoItem,
   type AllocationFormValues,
   type CsvOptionsResponse,
+  type SalaInfo,
   fetchCsvOptions,
   requestAllocation,
 } from "@/lib/allocation-client";
+import { fetchCurrentUser } from "@/lib/auth-client";
+import {
+  carregarAjustes,
+  descreverHorario,
+  exportarAjustes,
+  importarAjustes,
+  rotuloSala,
+  salvarAjustes,
+} from "@/lib/manual-adjustments";
 
 type Status = "idle" | "loading-options" | "running" | "success" | "error";
 
@@ -111,6 +131,21 @@ function applyFilters(html: string, filters: FilterValues): string {
   return doc.documentElement.outerHTML;
 }
 
+function normalizar(texto: string) {
+  return texto
+    .normalize("NFD")
+    .replace(/[̀-ͯ]/g, "")
+    .toLowerCase();
+}
+
+function mesmosArquivos(a: AllocationFormValues, b: AllocationFormValues) {
+  return (
+    a.predios === b.predios &&
+    a.salas === b.salas &&
+    a.disciplinas === b.disciplinas
+  );
+}
+
 export function AllocationWorkbench() {
   const [csvState, setCsvState] =
     useState<CsvOptionsResponse>(FALLBACK_CSV_OPTIONS);
@@ -124,6 +159,16 @@ export function AllocationWorkbench() {
   const [professores, setProfessores] = useState<string[]>([]);
   const [conflitos, setConflitos] = useState<string[]>([]);
   const [error, setError] = useState("");
+  const [alocacoes, setAlocacoes] = useState<AlocacaoItem[]>([]);
+  const [salas, setSalas] = useState<SalaInfo[]>([]);
+  const [ajustes, setAjustes] = useState<Ajuste[]>([]);
+  const [ajustesIgnorados, setAjustesIgnorados] = useState<AjusteIgnorado[]>([]);
+  const [runValues, setRunValues] = useState<AllocationFormValues | null>(null);
+  const [podeAjustar, setPodeAjustar] = useState(false);
+  const [dialogAlvo, setDialogAlvo] = useState<AlocacaoItem | null>(null);
+  const [busca, setBusca] = useState("");
+  const [avisoAjustes, setAvisoAjustes] = useState("");
+  const importInput = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
     let active = true;
@@ -135,10 +180,44 @@ export function AllocationWorkbench() {
       setStatus("idle");
     });
 
+    void fetchCurrentUser().then((user) => {
+      if (!active) return;
+      setPodeAjustar(typeof user === "object" && user?.podeAjustar === true);
+    });
+
     return () => {
       active = false;
     };
   }, []);
+
+  const salaPorCodigo = useMemo(
+    () => new Map(salas.map((s) => [s.codigo, s])),
+    [salas],
+  );
+
+  const alocacaoPorId = useMemo(
+    () => new Map(alocacoes.map((a) => [a.id, a])),
+    [alocacoes],
+  );
+
+  const pendentes = useMemo(
+    () => alocacoes.filter((a) => a.sala === null),
+    [alocacoes],
+  );
+
+  const resultadosBusca = useMemo(() => {
+    const termo = normalizar(busca.trim());
+    if (termo.length < 2) return [];
+    return alocacoes
+      .filter((a) =>
+        normalizar(`${a.disciplina} ${a.curso} ${a.professor}`).includes(termo),
+      )
+      .slice(0, 8);
+  }, [alocacoes, busca]);
+
+  const temMarcacoes = alocacoes.some(
+    (a) => a.manual || a.violacoes.length > 0,
+  );
 
   const activeFilterCount = useMemo(
     () =>
@@ -153,12 +232,18 @@ export function AllocationWorkbench() {
     return applyFilters(rawHtml, filters);
   }, [rawHtml, filters]);
 
-  async function handleSubmit(event: { preventDefault(): void }) {
-    event.preventDefault();
+  async function executar(
+    valoresRodada: AllocationFormValues,
+    listaAjustes: Ajuste[],
+    resetFilters: boolean,
+  ) {
     setStatus("running");
     setError("");
 
-    const result = await requestAllocation(values);
+    const result = await requestAllocation(
+      valoresRodada,
+      podeAjustar ? listaAjustes : [],
+    );
 
     if ("error" in result) {
       setStatus("error");
@@ -170,8 +255,92 @@ export function AllocationWorkbench() {
     setCursos(result.cursos);
     setProfessores(result.professores);
     setConflitos(result.conflitos);
-    setFilters(FILTER_DEFAULTS);
+    setAlocacoes(result.alocacoes);
+    setSalas(result.salas);
+    setAjustesIgnorados(result.ajustesIgnorados);
+    setRunValues(valoresRodada);
+    if (resetFilters) setFilters(FILTER_DEFAULTS);
     setStatus("success");
+  }
+
+  async function handleSubmit(event: { preventDefault(): void }) {
+    event.preventDefault();
+    const salvos = carregarAjustes(values);
+    setAjustes(salvos);
+    setAvisoAjustes("");
+    await executar(values, salvos, true);
+  }
+
+  /** Grava a nova lista de ajustes e refaz a rodada com ela. */
+  function atualizarAjustes(novos: Ajuste[]) {
+    if (!runValues) return;
+    setAjustes(novos);
+    salvarAjustes(runValues, novos);
+    void executar(runValues, novos, false);
+  }
+
+  function confirmarAjuste(ajuste: Ajuste) {
+    setDialogAlvo(null);
+    setBusca("");
+    setAvisoAjustes("");
+    atualizarAjustes([...ajustes, ajuste]);
+  }
+
+  function desfazerAjuste(indice: number) {
+    setAvisoAjustes("");
+    atualizarAjustes(ajustes.filter((_, i) => i !== indice));
+  }
+
+  function descartarAjustes() {
+    if (!window.confirm("Descartar todos os ajustes manuais desta rodada?")) {
+      return;
+    }
+    setAvisoAjustes("");
+    atualizarAjustes([]);
+  }
+
+  function baixarAjustes() {
+    if (!runValues) return;
+    const blob = new Blob([exportarAjustes(runValues, ajustes)], {
+      type: "application/json",
+    });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement("a");
+    link.href = url;
+    link.download = `ajustes-${runValues.disciplinas.replace(/\.csv$/, "")}.json`;
+    link.click();
+    URL.revokeObjectURL(url);
+  }
+
+  async function carregarArquivoAjustes(file: File | undefined) {
+    if (!file || !runValues) return;
+    try {
+      const arquivo = importarAjustes(await file.text());
+      setAvisoAjustes(
+        mesmosArquivos(arquivo.arquivos, runValues)
+          ? `${arquivo.ajustes.length} ajuste(s) importado(s).`
+          : `${arquivo.ajustes.length} ajuste(s) importado(s) de outra combinacao de CSVs (${arquivo.arquivos.disciplinas || "desconhecida"}). Os que nao baterem com a rodada atual serao ignorados.`,
+      );
+      atualizarAjustes(arquivo.ajustes);
+    } catch (err) {
+      setAvisoAjustes(
+        err instanceof Error ? err.message : "Nao foi possivel importar o arquivo.",
+      );
+    } finally {
+      if (importInput.current) importInput.current.value = "";
+    }
+  }
+
+  function descreverAjuste(ajuste: Ajuste) {
+    const principal = `${ajuste.nome} → ${rotuloSala(salaPorCodigo.get(ajuste.sala), ajuste.sala)}`;
+    if (ajuste.realocacoes.length === 0) return principal;
+    const extras = ajuste.realocacoes
+      .map(
+        (r) =>
+          `${alocacaoPorId.get(r.disciplina)?.disciplina ?? `linha ${r.disciplina}`} → ${rotuloSala(salaPorCodigo.get(r.sala), r.sala)}`,
+      )
+      .join("; ");
+    return `${principal} (realoca: ${extras})`;
   }
 
   function updateValue(key: keyof AllocationFormValues, value: string) {
@@ -187,6 +356,11 @@ export function AllocationWorkbench() {
     setCursos([]);
     setProfessores([]);
     setConflitos([]);
+    setAlocacoes([]);
+    setSalas([]);
+    setAjustesIgnorados([]);
+    setRunValues(null);
+    setAvisoAjustes("");
     setFilters(FILTER_DEFAULTS);
   }
 
@@ -409,7 +583,48 @@ export function AllocationWorkbench() {
             </div>
           ) : null}
 
-          {conflitos.length > 0 ? (
+          {filteredHtml && temMarcacoes ? (
+            <div className="grade-legend" aria-label="Legenda da grade">
+              <span className="legend-item legend-manual">Ajuste manual</span>
+              <span className="legend-item legend-violacao">
+                Sala menor que as vagas
+              </span>
+            </div>
+          ) : null}
+
+          {alocacoes.length > 0 && pendentes.length > 0 ? (
+            <section className="conflicts-panel" aria-label="Disciplinas sem sala">
+              <div className="conflicts-header">
+                <AlertTriangle aria-hidden="true" size={16} />
+                <strong>
+                  {pendentes.length}{" "}
+                  {pendentes.length === 1
+                    ? "disciplina sem sala"
+                    : "disciplinas sem sala"}
+                </strong>
+              </div>
+              <ul className="conflicts-list">
+                {pendentes.map((item) => (
+                  <li className="pending-item" key={item.id}>
+                    <span>
+                      {item.disciplina} ({item.curso}) — {descreverHorario(item)} ·{" "}
+                      {item.vagas} vagas
+                    </span>
+                    {podeAjustar ? (
+                      <button
+                        className="row-action"
+                        disabled={isRunning}
+                        onClick={() => setDialogAlvo(item)}
+                        type="button"
+                      >
+                        Alocar manualmente
+                      </button>
+                    ) : null}
+                  </li>
+                ))}
+              </ul>
+            </section>
+          ) : alocacoes.length === 0 && conflitos.length > 0 ? (
             <section className="conflicts-panel" aria-label="Disciplinas sem sala">
               <div className="conflicts-header">
                 <AlertTriangle aria-hidden="true" size={16} />
@@ -427,8 +642,153 @@ export function AllocationWorkbench() {
               </ul>
             </section>
           ) : null}
+
+          {podeAjustar && alocacoes.length > 0 ? (
+            <section className="adjustments-panel" aria-label="Ajustes manuais">
+              <div className="adjustments-header">
+                <Hand aria-hidden="true" size={16} />
+                <strong>Ajustes manuais ({ajustes.length})</strong>
+                <div className="adjustments-tools">
+                  <button
+                    className="row-action"
+                    disabled={ajustes.length === 0}
+                    onClick={baixarAjustes}
+                    type="button"
+                  >
+                    <Download aria-hidden="true" size={14} />
+                    <span>Exportar JSON</span>
+                  </button>
+                  <button
+                    className="row-action"
+                    disabled={isRunning}
+                    onClick={() => importInput.current?.click()}
+                    type="button"
+                  >
+                    <Upload aria-hidden="true" size={14} />
+                    <span>Importar JSON</span>
+                  </button>
+                  <input
+                    accept="application/json,.json"
+                    aria-label="Arquivo de ajustes"
+                    className="visually-hidden"
+                    onChange={(event) =>
+                      void carregarArquivoAjustes(event.target.files?.[0])
+                    }
+                    ref={importInput}
+                    type="file"
+                  />
+                  <button
+                    className="row-action danger"
+                    disabled={ajustes.length === 0 || isRunning}
+                    onClick={descartarAjustes}
+                    type="button"
+                  >
+                    <Trash2 aria-hidden="true" size={14} />
+                    <span>Descartar todos</span>
+                  </button>
+                </div>
+              </div>
+
+              <div className="adjustments-body">
+                <label className="field">
+                  <span>Mover uma disciplina</span>
+                  <div className="input-shell">
+                    <Search aria-hidden="true" size={16} />
+                    <input
+                      onChange={(event) => setBusca(event.target.value)}
+                      placeholder="Nome da disciplina, curso ou professor"
+                      type="search"
+                      value={busca}
+                    />
+                  </div>
+                </label>
+
+                {resultadosBusca.length > 0 ? (
+                  <ul className="adjustments-list" aria-label="Resultados da busca">
+                    {resultadosBusca.map((item) => (
+                      <li key={item.id}>
+                        <span>
+                          {item.disciplina} ({item.curso}) — {descreverHorario(item)} ·{" "}
+                          {rotuloSala(
+                            item.sala == null ? undefined : salaPorCodigo.get(item.sala),
+                            item.sala,
+                          )}
+                        </span>
+                        <button
+                          className="row-action"
+                          disabled={isRunning}
+                          onClick={() => setDialogAlvo(item)}
+                          type="button"
+                        >
+                          {item.sala == null ? "Alocar" : "Mover"}
+                        </button>
+                      </li>
+                    ))}
+                  </ul>
+                ) : busca.trim().length >= 2 ? (
+                  <p className="adjustments-empty">Nenhuma disciplina encontrada.</p>
+                ) : null}
+
+                {avisoAjustes ? (
+                  <div className="inline-alert" role="status">
+                    <AlertTriangle aria-hidden="true" size={18} />
+                    <span>{avisoAjustes}</span>
+                  </div>
+                ) : null}
+
+                {ajustes.length > 0 ? (
+                  <ol className="adjustments-list" aria-label="Ajustes aplicados">
+                    {ajustes.map((ajuste, indice) => {
+                      const ignorado = ajustesIgnorados.find(
+                        (i) => i.indice === indice,
+                      );
+                      return (
+                        <li
+                          className={ignorado ? "ignored" : undefined}
+                          key={`${indice}-${ajuste.disciplina}-${ajuste.sala}`}
+                        >
+                          <span>
+                            {descreverAjuste(ajuste)}
+                            {ignorado ? (
+                              <em className="adjustment-reason">
+                                Nao aplicado: {ignorado.motivo}
+                              </em>
+                            ) : null}
+                          </span>
+                          <button
+                            className="row-action"
+                            disabled={isRunning}
+                            onClick={() => desfazerAjuste(indice)}
+                            type="button"
+                          >
+                            <Undo2 aria-hidden="true" size={14} />
+                            <span>Desfazer</span>
+                          </button>
+                        </li>
+                      );
+                    })}
+                  </ol>
+                ) : (
+                  <p className="adjustments-empty">
+                    Nenhum ajuste manual. Use &quot;Alocar manualmente&quot; nas
+                    disciplinas sem sala ou busque uma disciplina para mover.
+                  </p>
+                )}
+              </div>
+            </section>
+          ) : null}
         </section>
       </div>
+
+      {dialogAlvo ? (
+        <ManualAllocationDialog
+          alocacoes={alocacoes}
+          alvo={dialogAlvo}
+          onCancel={() => setDialogAlvo(null)}
+          onConfirm={confirmarAjuste}
+          salas={salas}
+        />
+      ) : null}
     </div>
   );
 }

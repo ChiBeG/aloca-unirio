@@ -5,7 +5,8 @@ import { NextResponse, type NextRequest } from "next/server";
  * E apenas conveniencia de navegacao: quem valida a sessao e o papel e o Django.
  */
 export function middleware(request: NextRequest) {
-  if (request.cookies.has("sessionid")) {
+  // Desenvolvimento local com login desativado: o Django trata todos como "dev-local".
+  if (process.env.AUTH_DESATIVADA === "true" || request.cookies.has("sessionid")) {
     return NextResponse.next();
   }
 

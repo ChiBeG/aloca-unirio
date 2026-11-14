@@ -10,6 +10,7 @@ services:
       GOOGLE_CLIENT_ID: ${GOOGLE_CLIENT_ID:-}
       GOOGLE_CLIENT_SECRET: ${GOOGLE_CLIENT_SECRET:-}
       SQLITE_PATH: /app/data/db.sqlite3
+      AUTH_DESATIVADA: ${AUTH_DESATIVADA:-false}
     volumes:
       - ./backend/entrada:/app/entrada:ro
       - backend-data:/app/data
@@ -22,6 +23,7 @@ services:
     environment:
       DJANGO_BASE_URL: http://backend:8000
       DJANGO_PUBLIC_URL: ${DJANGO_PUBLIC_URL:-http://localhost:8000}
+      AUTH_DESATIVADA: ${AUTH_DESATIVADA:-false}
     ports:
       - "${BIND_ADDRESS:-0.0.0.0}:3002:3002"
     depends_on:

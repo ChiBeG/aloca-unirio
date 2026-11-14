@@ -40,6 +40,15 @@ MIDDLEWARE = [
     "allauth.account.middleware.AccountMiddleware",
 ]
 
+# Só para desenvolvimento local: dispensa o login e trata todo mundo como o
+# usuário "dev-local" (Operador). Ver contas/middleware.py.
+AUTH_DESATIVADA = os.environ.get("AUTH_DESATIVADA", "false").lower() == "true"
+if AUTH_DESATIVADA:
+    MIDDLEWARE.insert(
+        MIDDLEWARE.index("django.contrib.auth.middleware.AuthenticationMiddleware") + 1,
+        "contas.middleware.LoginDesativadoMiddleware",
+    )
+
 ROOT_URLCONF = "aloca_site.urls"
 
 TEMPLATES = [
@@ -118,6 +127,13 @@ SESSION_COOKIE_SAMESITE = "Lax"
 CSRF_COOKIE_SAMESITE = "Lax"
 # Em produção (HTTPS) os cookies devem ser Secure; desligue só para rodar sem HTTPS.
 SECURE_COOKIES = os.environ.get("DJANGO_SECURE_COOKIES", str(not DEBUG)).lower() == "true"
+if AUTH_DESATIVADA and SECURE_COOKIES:
+    from django.core.exceptions import ImproperlyConfigured
+
+    raise ImproperlyConfigured(
+        "AUTH_DESATIVADA=true é só para desenvolvimento e não pode ser usado com "
+        "DJANGO_SECURE_COOKIES=true (produção)."
+    )
 SESSION_COOKIE_SECURE = SECURE_COOKIES
 CSRF_COOKIE_SECURE = SECURE_COOKIES
 # Atrás do proxy reverso o Django recebe HTTP; sem isto o allauth envia ao Google

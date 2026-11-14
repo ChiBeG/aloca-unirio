@@ -1,7 +1,12 @@
 import type {
+  Ajuste,
+  AjusteIgnorado,
+  AlocacaoItem,
   AllocationFormValues,
   CsvOption,
   CsvOptionsResponse,
+  Movimento,
+  SalaInfo,
 } from "./allocation-client";
 import { FALLBACK_CSV_OPTIONS } from "./allocation-client";
 
@@ -19,8 +24,13 @@ type DjangoAlocarResponse = {
   cursos?: string[];
   professores?: string[];
   conflitos?: string[];
+  alocacoes?: AlocacaoItem[];
+  salas?: SalaInfo[];
+  ajustes_ignorados?: AjusteIgnorado[];
   error?: string;
 };
+
+const MAX_AJUSTES = 1000;
 
 export function getDjangoBaseUrl() {
   return (process.env.DJANGO_BASE_URL ?? DEFAULT_DJANGO_BASE_URL).replace(
@@ -35,6 +45,9 @@ export function getDjangoPublicUrl() {
     process.env.DJANGO_PUBLIC_URL ?? DEFAULT_DJANGO_PUBLIC_URL
   ).replace(/\/$/, "");
 }
+
+/** Entrada recebida do navegador em formato invalido (responde 400). */
+export class InvalidRequestError extends Error {}
 
 /** Erro do Django que preserva o status HTTP (ex.: 401/403 de autenticacao). */
 export class DjangoError extends Error {
@@ -77,11 +90,50 @@ export function validateAllocationValues(
 
   for (const [key, value] of Object.entries(parsed)) {
     if (!CSV_NAME_PATTERN.test(value)) {
-      throw new Error(`Arquivo invalido em ${key}.`);
+      throw new InvalidRequestError(`Arquivo invalido em ${key}.`);
     }
   }
 
   return parsed;
+}
+
+function parseMovimento(value: unknown): Movimento | null {
+  if (typeof value !== "object" || value === null) return null;
+  const { disciplina, sala } = value as Record<string, unknown>;
+  if (!Number.isInteger(disciplina) || !Number.isInteger(sala)) return null;
+  return { disciplina: disciplina as number, sala: sala as number };
+}
+
+/** Valida a lista de ajustes manuais antes de repassar ao Django. */
+export function validateAjustes(value: unknown): Ajuste[] {
+  if (value === undefined || value === null) return [];
+  if (!Array.isArray(value) || value.length > MAX_AJUSTES) {
+    throw new InvalidRequestError("Lista de ajustes manuais invalida.");
+  }
+
+  return value.map((item) => {
+    const movimento = parseMovimento(item);
+    const { nome, realocacoes } = (item ?? {}) as Record<string, unknown>;
+    const parsedRealocacoes = Array.isArray(realocacoes)
+      ? realocacoes.map(parseMovimento)
+      : realocacoes === undefined
+        ? []
+        : [null];
+
+    if (
+      !movimento ||
+      typeof nome !== "string" ||
+      parsedRealocacoes.some((r) => r === null)
+    ) {
+      throw new InvalidRequestError("Ajuste manual em formato invalido.");
+    }
+
+    return {
+      ...movimento,
+      nome,
+      realocacoes: parsedRealocacoes as Movimento[],
+    };
+  });
 }
 
 export async function loadCsvOptionsFromDjango(
@@ -137,16 +189,20 @@ export type AllocationPayload = {
   cursos: string[];
   professores: string[];
   conflitos: string[];
+  alocacoes: AlocacaoItem[];
+  salas: SalaInfo[];
+  ajustesIgnorados: AjusteIgnorado[];
 };
 
 export async function runAllocationThroughDjango(
   values: AllocationFormValues,
   authHeaders: Record<string, string> = {},
+  ajustes: Ajuste[] = [],
 ): Promise<AllocationPayload> {
   const response = await fetch(`${getDjangoBaseUrl()}/alocar/`, {
     method: "POST",
     headers: { "Content-Type": "application/json", ...authHeaders },
-    body: JSON.stringify(values),
+    body: JSON.stringify({ ...values, ajustes }),
     cache: "no-store",
     signal: AbortSignal.timeout(15_000),
   });
@@ -176,5 +232,8 @@ export async function runAllocationThroughDjango(
     cursos: data.cursos ?? [],
     professores: data.professores ?? [],
     conflitos: data.conflitos ?? [],
+    alocacoes: data.alocacoes ?? [],
+    salas: data.salas ?? [],
+    ajustesIgnorados: data.ajustes_ignorados ?? [],
   };
 }

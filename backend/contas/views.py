@@ -4,6 +4,7 @@ from django.views.decorators.csrf import ensure_csrf_cookie
 from django.views.decorators.http import require_GET, require_POST
 
 from .models import Perfil
+from .permissoes import pode_ajustar
 
 
 @require_GET
@@ -21,6 +22,7 @@ def me(request: HttpRequest) -> JsonResponse:
             "papel": perfil.papel or None,
             "papelLabel": perfil.get_papel_display() or None,
             "temAcesso": perfil.tem_acesso,
+            "podeAjustar": pode_ajustar(request.user),
         }
     )
 

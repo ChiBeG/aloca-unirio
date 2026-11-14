@@ -18,11 +18,56 @@ export type CsvOptionsResponse = {
   warning?: string;
 };
 
+/** Leva uma disciplina (linha do CSV) para uma sala (codigo). */
+export type Movimento = {
+  disciplina: number;
+  sala: number;
+};
+
+/**
+ * Ajuste manual: move uma disciplina e realoca quem ela desloca. Pode violar a
+ * capacidade, mas nunca deixa duas disciplinas no mesmo horario da mesma sala.
+ */
+export type Ajuste = Movimento & {
+  /** Nome da disciplina, para detectar que o CSV mudou desde o ajuste. */
+  nome: string;
+  realocacoes: Movimento[];
+};
+
+export type AlocacaoItem = {
+  id: number;
+  disciplina: string;
+  curso: string;
+  professor: string;
+  vagas: number;
+  dia: number;
+  inicio: number;
+  fim: number;
+  sala: number | null;
+  manual: boolean;
+  violacoes: string[];
+};
+
+export type SalaInfo = {
+  codigo: number;
+  nome: string;
+  predio: string;
+  capacidade: number;
+};
+
+export type AjusteIgnorado = {
+  indice: number;
+  motivo: string;
+};
+
 export type AllocationSuccess = {
   html: string;
   cursos: string[];
   professores: string[];
   conflitos: string[];
+  alocacoes: AlocacaoItem[];
+  salas: SalaInfo[];
+  ajustesIgnorados: AjusteIgnorado[];
 };
 
 export type AllocationFailure = {
@@ -72,6 +117,7 @@ export async function fetchCsvOptions(): Promise<CsvOptionsResponse> {
 
 export async function requestAllocation(
   values: AllocationFormValues,
+  ajustes: Ajuste[] = [],
 ): Promise<AllocationResponse> {
   const response = await fetch("/api/alocar", {
     method: "POST",
@@ -79,14 +125,23 @@ export async function requestAllocation(
       "Content-Type": "application/json",
       "X-CSRFToken": getCsrfToken(),
     },
-    body: JSON.stringify(values),
+    body: JSON.stringify({ ...values, ajustes }),
   });
 
-  const payload = (await response.json()) as AllocationResponse;
+  const payload = (await response.json()) as Partial<AllocationSuccess> &
+    Partial<AllocationFailure>;
 
-  if (!response.ok && !("error" in payload)) {
-    return { error: "Falha ao solicitar alocacao." };
+  if (!response.ok || payload.error) {
+    return { error: payload.error ?? "Falha ao solicitar alocacao." };
   }
 
-  return payload;
+  return {
+    html: payload.html ?? "",
+    cursos: payload.cursos ?? [],
+    professores: payload.professores ?? [],
+    conflitos: payload.conflitos ?? [],
+    alocacoes: payload.alocacoes ?? [],
+    salas: payload.salas ?? [],
+    ajustesIgnorados: payload.ajustesIgnorados ?? [],
+  };
 }

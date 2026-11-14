@@ -2,7 +2,17 @@ from functools import wraps
 
 from django.http import JsonResponse
 
-from .models import Perfil
+from .models import Papel, Perfil
+
+# Papéis que podem fazer ajustes manuais na alocação (RF07).
+PAPEIS_AJUSTE = {Papel.OPERADOR, Papel.DIRETOR, Papel.ADMIN_SUPERIOR}
+
+
+def pode_ajustar(usuario) -> bool:
+    if not usuario.is_authenticated:
+        return False
+    perfil, _ = Perfil.objects.get_or_create(usuario=usuario)
+    return perfil.tem_acesso and perfil.papel in PAPEIS_AJUSTE
 
 
 def requer_acesso(view):

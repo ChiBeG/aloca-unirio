@@ -52,6 +52,12 @@ docker compose exec backend python manage.py createsuperuser
 
 Use **localhost**, não `127.0.0.1`. O cookie de sessão é emitido pelo Django em `localhost:8000` e só chega ao frontend se os dois estiverem no mesmo host.
 
+### Testar sem login (só desenvolvimento)
+
+Para testar sem configurar o Google, coloque `AUTH_DESATIVADA=true` no `.env` e rode `docker compose up -d --build`. Quem abrir http://localhost:3002 entra direto como o usuário `dev-local`, com papel de **Operador**, e pode fazer ajustes manuais. Para testar outro papel, troque o papel de `dev-local` no admin. Um login de verdade (por exemplo, no admin) tem prioridade sobre o `dev-local`.
+
+O Django se recusa a iniciar com `AUTH_DESATIVADA=true` e `DJANGO_SECURE_COOKIES=true`, então isso não roda em produção por engano.
+
 ### Comandos úteis
 
 | Comando | O que faz |
@@ -108,6 +114,7 @@ Definidas no `.env` da raiz e repassadas aos containers pelo `docker-compose.yml
 | `FRONTEND_URL` | backend | `http://localhost:3002` | Endereço público do frontend. O Django manda o usuário para ele após o login e o aceita como origem confiável para CSRF |
 | `DJANGO_PUBLIC_URL` | frontend | `http://localhost:8000` | Endereço do backend usado pelo navegador (login) |
 | `DJANGO_BASE_URL` | frontend | `http://backend:8000` | Endereço do backend usado pelo servidor do frontend (fixo no compose) |
+| `AUTH_DESATIVADA` | backend e frontend | `false` | `true` dispensa o login e entra como `dev-local` (Operador). Só para desenvolvimento local |
 | `BIND_ADDRESS` | compose | `0.0.0.0` | Interface onde as portas 8000 e 3002 são publicadas. Em produção, `127.0.0.1` |
 
 ## Deploy em produção
@@ -370,7 +377,11 @@ npm run test:e2e    # testes end-to-end (Playwright)
 Os endpoints do alocador exigem sessão com papel atribuído. Sem login, respondem 401; com login mas sem papel, respondem 403. Requisições POST exigem o header `X-CSRFToken`.
 
 - `GET /`: lista os CSVs disponíveis em `backend/entrada/` e os arquivos padrão.
-- `POST /alocar/`: recebe `{ "predios", "salas", "disciplinas" }` (nomes dos CSVs) e retorna o HTML da grade, a lista de cursos, a lista de professores e os conflitos.
+- `POST /alocar/`: recebe `{ "predios", "salas", "disciplinas", "ajustes"? }` (nomes dos CSVs e ajustes manuais opcionais) e retorna o HTML da grade, as listas de cursos e professores, os conflitos, a alocação de cada disciplina (`alocacoes`), as salas e os ajustes que não puderam ser aplicados (`ajustes_ignorados`).
+
+### Ajustes manuais
+
+Na tela de alocação, Operador, Diretor e Administrador Superior podem alocar à mão uma disciplina sem sala ou mover uma disciplina já alocada. O ajuste pode usar sala menor que as vagas (fica marcado na grade), mas nunca deixa duas disciplinas na mesma sala no mesmo horário: se a sala estiver ocupada, é preciso escolher outra sala livre para quem estava lá. Os ajustes ficam salvos no navegador para aquela combinação de CSVs, são reaplicados a cada rodada e podem ser exportados e importados em JSON. Cada ajuste é `{ "disciplina": <linha no CSV>, "sala": <código>, "nome": <nome da disciplina>, "realocacoes": [{ "disciplina", "sala" }] }`.
 - `GET /api/me/`: usuário logado e papel (401 sem sessão). Também emite o cookie `csrftoken`.
 - `POST /api/logout/`: encerra a sessão.
 - `/accounts/google/login/`: inicia o login com Google.

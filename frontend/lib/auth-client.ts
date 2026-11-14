@@ -4,6 +4,8 @@ export type CurrentUser = {
   papel: string | null;
   papelLabel: string | null;
   temAcesso: boolean;
+  /** Operador, Diretor e Administrador Superior podem fazer ajustes manuais. */
+  podeAjustar?: boolean;
 };
 
 /** Token CSRF emitido pelo Django (cookie csrftoken), enviado nos POSTs. */
