@@ -21,10 +21,6 @@ type Props = {
   salas: SalaInfo[];
   onCancel: () => void;
   onConfirm: (ajuste: Ajuste) => void;
-  /** Sala ja escolhida (ex.: soltou o bloco na grade). Esconde os cartoes de destino. */
-  salaInicial?: number;
-  /** Destinos pre-selecionados das deslocadas (ex.: troca). */
-  escolhasIniciais?: Record<number, number | undefined>;
 };
 
 export function ManualAllocationDialog({
@@ -33,16 +29,11 @@ export function ManualAllocationDialog({
   salas,
   onCancel,
   onConfirm,
-  salaInicial,
-  escolhasIniciais,
 }: Props) {
   const tituloId = useId();
   const corpo = useRef<HTMLFormElement>(null);
-  const [salaDestino, setSalaDestino] = useState<number | null>(salaInicial ?? null);
-  const [escolhas, setEscolhas] = useState<Record<number, number | undefined>>(
-    escolhasIniciais ?? {},
-  );
-  const [mostrarDestinos, setMostrarDestinos] = useState(salaInicial == null);
+  const [salaDestino, setSalaDestino] = useState<number | null>(null);
+  const [escolhas, setEscolhas] = useState<Record<number, number | undefined>>({});
 
   const salaPorCodigo = useMemo(
     () => new Map(salas.map((s) => [s.codigo, s])),
@@ -147,30 +138,14 @@ export function ManualAllocationDialog({
             </div>
           </dl>
 
-          {mostrarDestinos ? (
-            <SalaCards
-              legenda="Sala de destino"
-              nome={`destino-${alvo.id}`}
-              onSelect={escolherDestino}
-              opcoes={opcoesDestino}
-              selecionada={salaDestino}
-              vagas={alvo.vagas}
-            />
-          ) : (
-            <div className="manual-dialog-move">
-              <span>
-                Mover para{" "}
-                <strong>{rotuloSala(salaPorCodigo.get(salaDestino ?? -1), salaDestino)}</strong>
-              </span>
-              <button
-                className="row-action"
-                onClick={() => setMostrarDestinos(true)}
-                type="button"
-              >
-                Escolher outra sala
-              </button>
-            </div>
-          )}
+          <SalaCards
+            legenda="Sala de destino"
+            nome={`destino-${alvo.id}`}
+            onSelect={escolherDestino}
+            opcoes={opcoesDestino}
+            selecionada={salaDestino}
+            vagas={alvo.vagas}
+          />
 
           {deslocadas.length > 0 ? (
             <section className="manual-dialog-section" aria-label="Disciplinas deslocadas">

@@ -208,7 +208,14 @@ describe("AllocationWorkbench - ajustes manuais", () => {
     await screen.findByRole("button", { name: "Grade interativa" });
   }
 
-  function trilha(sala: number) {
+  /** Duplo clique na pendente da bandeja abre o dialogo completo. */
+  async function abrirDialogo(nome: string) {
+    const bandeja = within(screen.getByRole("complementary", { name: "Disciplinas sem sala no dia" }));
+    await userEvent.dblClick(bandeja.getByText(nome));
+    await screen.findByRole("dialog");
+  }
+
+    function trilha(sala: number) {
     const el = document.querySelector<HTMLElement>(`.timeline-track[data-sala="${sala}"]`);
     if (!el) throw new Error(`trilha ${sala} nao encontrada`);
     return el;
@@ -218,7 +225,7 @@ describe("AllocationWorkbench - ajustes manuais", () => {
     mockFetch(true);
     await gerar();
 
-    await userEvent.click(await screen.findByRole("button", { name: "Alocar manualmente" }));
+    await abrirDialogo("Y");
     const dialog = screen.getByRole("dialog");
     expect(dialog).toHaveTextContent("Y");
 
@@ -245,7 +252,7 @@ describe("AllocationWorkbench - ajustes manuais", () => {
     mockFetch(true);
     await gerar();
 
-    await userEvent.click(await screen.findByRole("button", { name: "Alocar manualmente" }));
+    await abrirDialogo("Y");
     await userEvent.click(
       within(screen.getByRole("group", { name: "Sala de destino" })).getByRole("radio", {
         name: /CCH-A/,
@@ -272,7 +279,7 @@ describe("AllocationWorkbench - ajustes manuais", () => {
     mockFetch(true);
     await gerar();
 
-    await userEvent.click(await screen.findByRole("button", { name: "Alocar manualmente" }));
+    await abrirDialogo("Y");
     await userEvent.click(
       within(screen.getByRole("group", { name: "Sala de destino" })).getByRole("radio", {
         name: /CCH-A/,
@@ -304,7 +311,7 @@ describe("AllocationWorkbench - ajustes manuais", () => {
     expect(screen.queryByRole("dialog")).not.toBeInTheDocument();
   });
 
-  test("grade interativa: soltar em sala ocupada pergunta para onde vai quem estava la", async () => {
+  test("grade interativa: soltar em sala ocupada pede confirmacao", async () => {
     mockFetch(true);
     await gerar();
 
@@ -321,16 +328,15 @@ describe("AllocationWorkbench - ajustes manuais", () => {
     fireEvent.dragOver(trilha(101), { dataTransfer });
     fireEvent.drop(trilha(101), { dataTransfer });
 
-    const dialog = await screen.findByRole("dialog");
-    expect(dialog).toHaveTextContent("Mover para CCH-A");
-    expect(screen.queryByRole("group", { name: "Sala de destino" })).not.toBeInTheDocument();
-    const deslocada = within(screen.getByRole("group", { name: /^X \(Curso\)/ }));
-    await userEvent.click(deslocada.getByRole("radio", { name: /CCH-B/ }));
-    await userEvent.click(screen.getByRole("button", { name: "Confirmar ajuste" }));
+    // Y veio das pendentes: nao ha sala de origem para trocar, entao X fica sem sala.
+    const confirmacao = await screen.findByRole("alertdialog", { name: "Tem certeza?" });
+    expect(confirmacao).toHaveTextContent("'Y' vai para CCH-A.");
+    expect(confirmacao).toHaveTextContent("'X' fica sem sala.");
+    await userEvent.click(within(confirmacao).getByRole("button", { name: "Sim" }));
 
     await waitFor(() => expect(corpos).toHaveLength(2));
     expect(corpos[1].ajustes).toEqual([
-      { disciplina: 2, sala: 101, nome: "Y", realocacoes: [{ disciplina: 1, sala: 102 }] },
+      { disciplina: 2, sala: 101, nome: "Y", realocacoes: [{ disciplina: 1, sala: null }] },
     ]);
   });
 
@@ -342,7 +348,10 @@ describe("AllocationWorkbench - ajustes manuais", () => {
     await userEvent.click(bandeja.getByText("Y"));
     await userEvent.click(within(trilha(101)).getByText("X"));
 
-    expect(await screen.findByRole("dialog")).toHaveTextContent("Mover para CCH-A");
+    const confirmacao = await screen.findByRole("alertdialog", { name: "Tem certeza?" });
+    await userEvent.click(within(confirmacao).getByRole("button", { name: "Cancelar" }));
+    expect(screen.queryByRole("alertdialog")).not.toBeInTheDocument();
+    expect(corpos).toHaveLength(1);
   });
 
   test("papel sem permissao ve a grade sem poder arrastar", async () => {
@@ -352,11 +361,14 @@ describe("AllocationWorkbench - ajustes manuais", () => {
     expect(screen.queryByText(/Arraste um bloco/)).not.toBeInTheDocument();
   });
 
-  test("alterna para a grade por sala", async () => {
+  test("lista de sem sala aparece so na grade por sala", async () => {
     mockFetch(true);
     await gerar();
+    expect(screen.queryByRole("button", { name: "Alocar manualmente" })).not.toBeInTheDocument();
+
     await userEvent.click(screen.getByRole("button", { name: "Grade por sala" }));
     expect(screen.getByTitle("Grade horaria gerada")).toBeInTheDocument();
+    expect(screen.getByRole("button", { name: "Alocar manualmente" })).toBeInTheDocument();
   });
 
   test("reenvia os ajustes salvos na proxima rodada", async () => {
@@ -374,8 +386,7 @@ describe("AllocationWorkbench - ajustes manuais", () => {
     mockFetch(false);
     await gerar();
 
-    expect(await screen.findByText(/disciplina sem sala/)).toBeInTheDocument();
-    expect(screen.queryByRole("button", { name: "Alocar manualmente" })).not.toBeInTheDocument();
+    expect(screen.getByRole("complementary", { name: "Disciplinas sem sala no dia" })).toHaveTextContent("Y");
     expect(screen.queryByRole("region", { name: "Ajustes manuais" })).not.toBeInTheDocument();
   });
 });

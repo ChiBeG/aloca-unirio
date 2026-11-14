@@ -21,6 +21,7 @@ import {
 import { useEffect, useMemo, useRef, useState } from "react";
 
 import { AllocationTimeline } from "@/components/allocation-timeline";
+import { ConfirmDialog } from "@/components/confirm-dialog";
 import { ManualAllocationDialog } from "@/components/manual-allocation-dialog";
 import {
   FALLBACK_CSV_OPTIONS,
@@ -36,8 +37,8 @@ import {
 import { fetchCurrentUser } from "@/lib/auth-client";
 import {
   carregarAjustes,
+  ajusteRapido,
   descreverHorario,
-  escolhasDeTroca,
   exportarAjustes,
   importarAjustes,
   ocupantes,
@@ -170,11 +171,10 @@ export function AllocationWorkbench() {
   const [ajustesIgnorados, setAjustesIgnorados] = useState<AjusteIgnorado[]>([]);
   const [runValues, setRunValues] = useState<AllocationFormValues | null>(null);
   const [podeAjustar, setPodeAjustar] = useState(false);
-  const [dialogo, setDialogo] = useState<{
-    alvo: AlocacaoItem;
-    salaInicial?: number;
-    escolhasIniciais?: Record<number, number | undefined>;
-  } | null>(null);
+  const [dialogo, setDialogo] = useState<{ alvo: AlocacaoItem } | null>(null);
+  const [confirmacao, setConfirmacao] = useState<{ ajuste: Ajuste; linhas: string[] } | null>(
+    null,
+  );
   const [visao, setVisao] = useState<"interativa" | "planilha">("interativa");
   const [busca, setBusca] = useState("");
   const [avisoAjustes, setAvisoAjustes] = useState("");
@@ -296,12 +296,33 @@ export function AllocationWorkbench() {
       confirmarAjuste({ disciplina: item.id, sala, nome: item.disciplina, realocacoes: [] });
       return;
     }
-    // Sala ocupada: pergunta para onde vai quem estava la (troca pre-selecionada).
-    setDialogo({
-      alvo: item,
-      salaInicial: sala,
-      escolhasIniciais: escolhasDeTroca(alocacoes, salas, item, sala),
-    });
+    // Sala ocupada: quem estava la troca de sala quando possivel, senao fica sem sala.
+    const ajuste = ajusteRapido(alocacoes, salas, item, sala);
+    if (!ajuste) {
+      setDialogo({ alvo: item });
+      return;
+    }
+    setConfirmacao({ ajuste, linhas: descreverConfirmacao(item, ajuste) });
+  }
+
+  function descreverConfirmacao(item: AlocacaoItem, ajuste: Ajuste) {
+    const nomeSala = (codigo: number) => rotuloSala(salaPorCodigo.get(codigo), codigo);
+    const aviso = (vagas: number, codigo: number) => {
+      const sala = salaPorCodigo.get(codigo);
+      return sala && sala.capacidade < vagas
+        ? ` (⚠ ${sala.capacidade} lugares para ${vagas} vagas)`
+        : "";
+    };
+    return [
+      `'${item.disciplina}' vai para ${nomeSala(ajuste.sala)}${aviso(item.vagas, ajuste.sala)}.`,
+      ...ajuste.realocacoes.map((r) => {
+        const d = alocacaoPorId.get(r.disciplina);
+        const nome = d?.disciplina ?? `linha ${r.disciplina}`;
+        return r.sala == null
+          ? `'${nome}' fica sem sala.`
+          : `'${nome}' vai para ${nomeSala(r.sala)}${aviso(d?.vagas ?? 0, r.sala)} (troca).`;
+      }),
+    ];
   }
 
   function confirmarAjuste(ajuste: Ajuste) {
@@ -648,7 +669,8 @@ export function AllocationWorkbench() {
             </div>
           ) : null}
 
-          {alocacoes.length > 0 && pendentes.length > 0 ? (
+          {/* Na grade interativa a bandeja "Sem sala" ja cumpre esse papel. */}
+          {alocacoes.length > 0 && pendentes.length > 0 && visao === "planilha" ? (
             <section className="conflicts-panel" aria-label="Disciplinas sem sala">
               <div className="conflicts-header">
                 <AlertTriangle aria-hidden="true" size={16} />
@@ -829,8 +851,8 @@ export function AllocationWorkbench() {
                   </ol>
                 ) : (
                   <p className="adjustments-empty">
-                    Nenhum ajuste manual. Use &quot;Alocar manualmente&quot; nas
-                    disciplinas sem sala ou busque uma disciplina para mover.
+                    Nenhum ajuste manual. Arraste as disciplinas na grade interativa
+                    ou busque uma disciplina para mover.
                   </p>
                 )}
               </div>
@@ -843,12 +865,23 @@ export function AllocationWorkbench() {
         <ManualAllocationDialog
           alocacoes={alocacoes}
           alvo={dialogo.alvo}
-          escolhasIniciais={dialogo.escolhasIniciais}
-          key={`${dialogo.alvo.id}-${dialogo.salaInicial ?? "livre"}`}
+          key={dialogo.alvo.id}
           onCancel={() => setDialogo(null)}
           onConfirm={confirmarAjuste}
-          salaInicial={dialogo.salaInicial}
           salas={salas}
+        />
+      ) : null}
+
+      {confirmacao ? (
+        <ConfirmDialog
+          linhas={confirmacao.linhas}
+          onCancel={() => setConfirmacao(null)}
+          onConfirm={() => {
+            const { ajuste } = confirmacao;
+            setConfirmacao(null);
+            confirmarAjuste(ajuste);
+          }}
+          titulo="Tem certeza?"
         />
       ) : null}
     </div>

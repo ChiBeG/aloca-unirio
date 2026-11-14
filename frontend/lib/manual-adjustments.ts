@@ -126,6 +126,24 @@ export function escolhasDeTroca(
   return escolhas;
 }
 
+/**
+ * Ajuste de um soltar na grade: cada deslocada troca para a sala de onde o alvo
+ * saiu quando possivel; senao fica sem sala. Nunca deixa duas no mesmo horario.
+ */
+export function ajusteRapido(
+  alocacoes: AlocacaoItem[],
+  salas: SalaInfo[],
+  alvo: AlocacaoItem,
+  salaDestino: number,
+): Ajuste | null {
+  const escolhas = escolhasDeTroca(alocacoes, salas, alvo, salaDestino);
+  for (const d of ocupantes(alocacoes, salaDestino, alvo)) {
+    if (escolhas[d.id] == null) escolhas[d.id] = SEM_SALA;
+  }
+  const resultado = montarAjuste(alocacoes, salas, alvo, salaDestino, escolhas);
+  return "ajuste" in resultado ? resultado.ajuste : null;
+}
+
 /** Monta o ajuste se a operacao for valida; senao devolve o motivo. */
 export function montarAjuste(
   alocacoes: AlocacaoItem[],

@@ -2,10 +2,11 @@ import { describe, expect, test } from "vitest";
 
 import type { AlocacaoItem, SalaInfo } from "./allocation-client";
 import {
+  ajusteRapido,
+  escolhasDeTroca,
   exportarAjustes,
   importarAjustes,
   montarAjuste,
-  escolhasDeTroca,
   ocupantes,
   SEM_SALA,
   salasLivresParaDeslocada,
@@ -171,6 +172,22 @@ describe("escolhasDeTroca", () => {
 
   test("disciplina sem sala nao tem troca", () => {
     expect(escolhasDeTroca(alocacoes, salas, { ...Y, inicio: 8, fim: 10 }, A)).toEqual({});
+  });
+});
+
+describe("ajusteRapido", () => {
+  test("troca quando a sala de origem fica livre", () => {
+    expect(ajusteRapido(alocacoes, salas, R, A)?.realocacoes).toEqual([
+      { disciplina: P.id, sala: B },
+      { disciplina: Q.id, sala: B },
+    ]);
+  });
+
+  test("sem sala de origem, quem estava la fica sem sala", () => {
+    const Z = item(11, "Z", null, 8, 10);
+    expect(ajusteRapido(alocacoes, salas, Z, A)?.realocacoes).toEqual([
+      { disciplina: P.id, sala: null },
+    ]);
   });
 });
 
